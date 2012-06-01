@@ -63,6 +63,9 @@ class MyApp(wx.App):
 
 
         bottompanel = wx.Panel(basepanel, wx.ID_ANY, style = wx.BORDER_SUNKEN)
+        listbox = wx.ListBox(bottompanel, wx.ID_ANY, style=wx.LB_NEEDED_SB)
+        layout_bottom = wx.BoxSizer(wx.HORIZONTAL)
+        layout_bottom.Add(listbox, proportion=1, flag=wx.GROW|wx.ALL, border=3)
 
         layout_top1 = wx.BoxSizer(wx.HORIZONTAL)
         layout_top1.Add(self.message, proportion=1, flag=wx.GROW)
@@ -84,6 +87,7 @@ class MyApp(wx.App):
         toppanel.SetSizer(layout_top)
         top1panel.SetSizer(layout_top1)
         top2panel.SetSizer(layout_top2)
+        bottompanel.SetSizer(layout_bottom)
 
         self.frame.Show()
 
