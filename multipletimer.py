@@ -35,23 +35,25 @@ class MessageFrame(wx.Frame):
 
 class MyApp(wx.App):
     def OnInit(self):
-        frame = wx.Frame(None, wx.ID_ANY, "Multiple Timer", size = (300, 200))
-        frame.CreateStatusBar()
-        panel = wx.Panel(frame, wx.ID_ANY)
+        self.frame = wx.Frame(None, wx.ID_ANY, "Multiple Timer", size = (300, 200))
+        self.frame.CreateStatusBar()
+        panel = wx.Panel(self.frame, wx.ID_ANY)
 
         button_1 = wx.Button(panel, wx.ID_ANY, "alarm")
-        button_1.Bind(wx.EVT_BUTTON, alarm)
+        button_1.Bind(wx.EVT_BUTTON, self.alarm)
 
         layout = wx.BoxSizer(wx.VERTICAL)
         layout.Add(button_1)
 
         panel.SetSizer(layout)
 
-        self.SetTopWindow(frame)
+        self.frame.Show()
+
+        self.SetTopWindow(self.frame)
         return True
 
-    def alarm(event):
-        childframe = MessageFrame(topframe, "Alarm")
+    def alarm(self, event):
+        childframe = MessageFrame(self.frame, "Alarm")
 
 if __name__ == "__main__":
     app = MyApp()
