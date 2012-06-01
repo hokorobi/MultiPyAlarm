@@ -41,19 +41,12 @@ class MessageFrame(wx.Frame):
         time.sleep(0.1)
         self.Move((pos[0], pos[1]))
 
-class MyTimer(wx.Timer):
-    def __init__(self, num, datetimeadd, second, message="UP ON TIME"):
-        wx.Timer.__init__(self)
-        self.num = num
-        self.datetimeadd = datetimeadd
-        self.second = second
-        self.message = message
-
-
 class MyApp(wx.App):
-    self.timernum = 0
 
     def OnInit(self):
+        self.timernum = 0
+        self.timers = dict()
+
         self.frame = wx.Frame(None, wx.ID_ANY, "Multiple Timer", size = (300, 200))
         self.frame.CreateStatusBar()
         basepanel = wx.Panel(self.frame, wx.ID_ANY)
@@ -95,15 +88,16 @@ class MyApp(wx.App):
         self.frame.Show()
 
         self.SetTopWindow(self.frame)
+
+        self.timer = wx.Timer(self)
+        self.timer.Start(1000)
+        self.Bind(wx.EVT_TIMER, self.onTimer, self.timer)
         return True
 
-    def addTimer(self, event):
-        self.timernum = self.timernum + 1
-        timer = MyTimer(self, self.timernum, datetime.datetime.today(), self.message.getValue())
-        self.Bind(wx.EVT_TIMER, self.onTimer, self.timer)
+    def getCounter(self):
         counter = self.count_text.GetValue()
         if counter.isdigit():
-            self.timer.Start(int(counter) * 1000)
+            return counter
         else:
             p = re.compile(r'([hm])')
             items = p.split(counter)
@@ -122,12 +116,17 @@ class MyApp(wx.App):
             if num != 0:
                 total = num + total
             #print total
-            if total != 0:
-                self.timer.Start(total * 1000)
+            return total
+
+    def addTimer(self, event):
+        self.timernum = self.timernum + 1
+        self.timers[self.timernum] = [self.timernum, datetime.datetime.today(), self.getCounter(), self.message.GetValue()]
 
     def onTimer(self, event):
-        childframe = MessageFrame(self.frame, "Alarm")
-        self.timer.Stop()
+        if self.timers:
+            #childframe = MessageFrame(self.frame, "Alarm")
+            print self.timers
+            pass
 
 if __name__ == "__main__":
     app = MyApp()
