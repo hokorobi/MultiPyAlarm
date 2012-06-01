@@ -46,25 +46,38 @@ class MyApp(wx.App):
         basepanel = wx.Panel(self.frame, wx.ID_ANY)
 
         toppanel = wx.Panel(basepanel, wx.ID_ANY, style = wx.BORDER_SUNKEN)
-        message = wx.TextCtrl(toppanel, wx.ID_ANY)
-        count_text = wx.TextCtrl(toppanel, wx.ID_ANY)
-        button_1 = wx.Button(toppanel, wx.ID_ANY, "add alarm")
+
+        top1panel = wx.Panel(toppanel, wx.ID_ANY)
+        message = wx.TextCtrl(top1panel, wx.ID_ANY)
+
+        top2panel = wx.Panel(toppanel, wx.ID_ANY)
+        button_1 = wx.Button(top2panel, wx.ID_ANY, "add alarm")
+        count_text = wx.TextCtrl(top2panel, wx.ID_ANY)
         button_1.Bind(wx.EVT_BUTTON, self.startTimer)
+
 
         bottompanel = wx.Panel(basepanel, wx.ID_ANY, style = wx.BORDER_SUNKEN)
 
+        layout_top1 = wx.BoxSizer(wx.HORIZONTAL)
+        layout_top1.Add(message, proportion=1, flag=wx.GROW)
 
-        layout_top = wx.BoxSizer(wx.HORIZONTAL)
-        layout_top.Add(count_text)
-        layout_top.Add(button_1)
+        layout_top2 = wx.BoxSizer(wx.HORIZONTAL)
+        layout_top2.Add(count_text)
+        layout_top2.Add(button_1)
+
+        layout_top = wx.BoxSizer(wx.VERTICAL)
+        layout_top.Add(top1panel, flag=wx.GROW)
+        layout_top.Add(top2panel, flag=wx.GROW)
 
         layout = wx.BoxSizer(wx.VERTICAL)
-        layout.Add(toppanel, proportion=1, flag=wx.GROW)
+        layout.Add(toppanel, flag=wx.GROW)
         layout.Add(bottompanel, proportion=1, flag=wx.GROW)
         #layout.Add(button_1)
 
         basepanel.SetSizer(layout)
         toppanel.SetSizer(layout_top)
+        top1panel.SetSizer(layout_top1)
+        top2panel.SetSizer(layout_top2)
 
         self.frame.Show()
 
