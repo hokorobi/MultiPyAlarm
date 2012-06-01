@@ -51,8 +51,8 @@ class MyApp(wx.App):
         message = wx.TextCtrl(top1panel, wx.ID_ANY)
 
         top2panel = wx.Panel(toppanel, wx.ID_ANY)
-        button_1 = wx.Button(top2panel, wx.ID_ANY, "add alarm")
         count_text = wx.TextCtrl(top2panel, wx.ID_ANY)
+        button_1 = wx.Button(top2panel, wx.ID_ANY, "add alarm")
         button_1.Bind(wx.EVT_BUTTON, self.startTimer)
 
 
