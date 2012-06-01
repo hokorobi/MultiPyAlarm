@@ -5,8 +5,14 @@ import sys
 import wx
 
 class MessageFrame(wx.Frame):
-    def __init__(self, parent, title):
+    def __init__(self, parent, title, message="UP ON TIME"):
         wx.Frame.__init__(self, parent, title=title)
+
+        panel = wx.Panel(self, wx.ID_ANY)
+        text = wx.StaticText(panel, wx.ID_ANY, message, style = wx.TE_CENTER)
+        layout = wx.BoxSizer(wx.VERTICAL)
+        layout.Add(text, flag = wx.GROW)
+        panel.SetSizer(layout)
         self.Show(True)
 
         self.alarm_move_window(self)
