@@ -46,7 +46,7 @@ class MyApp(wx.App):
         panel = wx.Panel(self.frame, wx.ID_ANY)
 
         button_1 = wx.Button(panel, wx.ID_ANY, "alarm")
-        button_1.Bind(wx.EVT_BUTTON, self.alarm)
+        button_1.Bind(wx.EVT_BUTTON, self.startTimer)
 
         layout = wx.BoxSizer(wx.VERTICAL)
         layout.Add(button_1)
@@ -58,8 +58,14 @@ class MyApp(wx.App):
         self.SetTopWindow(self.frame)
         return True
 
-    def alarm(self, event):
+    def startTimer(self, event):
+        self.timer = wx.Timer(self)
+        self.Bind(wx.EVT_TIMER, self.onTimer, self.timer)
+        self.timer.Start(3)
+
+    def onTimer(self, event):
         childframe = MessageFrame(self.frame, "Alarm")
+        self.timer.Stop()
 
 if __name__ == "__main__":
     app = MyApp()
