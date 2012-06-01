@@ -97,7 +97,7 @@ class MyApp(wx.App):
     def getCounter(self):
         counter = self.count_text.GetValue()
         if counter.isdigit():
-            return counter
+            return int(counter)
         else:
             p = re.compile(r'([hm])')
             items = p.split(counter)
@@ -124,9 +124,13 @@ class MyApp(wx.App):
 
     def onTimer(self, event):
         if self.timers:
-            #childframe = MessageFrame(self.frame, "Alarm")
-            print self.timers
-            pass
+            #print self.timers
+            for key, value in self.timers.items():
+                timeraddtime = value[1]
+                timer = value[2]
+                if timeraddtime + datetime.timedelta(seconds=timer) < datetime.datetime.today():
+                    del self.timers[key]
+                    MessageFrame(self.frame, "Alarm")
 
 if __name__ == "__main__":
     app = MyApp()
