@@ -4,6 +4,7 @@ import time
 import sys
 import wx
 import re
+import datetime
 
 class MessageFrame(wx.Frame):
     def __init__(self, parent, title, message="UP ON TIME"):
@@ -40,7 +41,18 @@ class MessageFrame(wx.Frame):
         time.sleep(0.1)
         self.Move((pos[0], pos[1]))
 
+class MyTimer(wx.Timer):
+    def __init__(self, num, datetimeadd, second, message="UP ON TIME"):
+        wx.Timer.__init__(self)
+        self.num = num
+        self.datetimeadd = datetimeadd
+        self.second = second
+        self.message = message
+
+
 class MyApp(wx.App):
+    self.timernum = 0
+
     def OnInit(self):
         self.frame = wx.Frame(None, wx.ID_ANY, "Multiple Timer", size = (300, 200))
         self.frame.CreateStatusBar()
@@ -49,18 +61,18 @@ class MyApp(wx.App):
         toppanel = wx.Panel(basepanel, wx.ID_ANY, style = wx.BORDER_SUNKEN)
 
         top1panel = wx.Panel(toppanel, wx.ID_ANY)
-        message = wx.TextCtrl(top1panel, wx.ID_ANY)
+        self.message = wx.TextCtrl(top1panel, wx.ID_ANY)
 
         top2panel = wx.Panel(toppanel, wx.ID_ANY)
         self.count_text = wx.TextCtrl(top2panel, wx.ID_ANY)
         button_1 = wx.Button(top2panel, wx.ID_ANY, "add alarm")
-        button_1.Bind(wx.EVT_BUTTON, self.startTimer)
+        button_1.Bind(wx.EVT_BUTTON, self.addTimer)
 
 
         bottompanel = wx.Panel(basepanel, wx.ID_ANY, style = wx.BORDER_SUNKEN)
 
         layout_top1 = wx.BoxSizer(wx.HORIZONTAL)
-        layout_top1.Add(message, proportion=1, flag=wx.GROW)
+        layout_top1.Add(self.message, proportion=1, flag=wx.GROW)
 
         layout_top2 = wx.BoxSizer(wx.HORIZONTAL)
         layout_top2.Add(self.count_text)
@@ -85,8 +97,9 @@ class MyApp(wx.App):
         self.SetTopWindow(self.frame)
         return True
 
-    def startTimer(self, event):
-        self.timer = wx.Timer(self)
+    def addTimer(self, event):
+        self.timernum = self.timernum + 1
+        timer = MyTimer(self, self.timernum, datetime.datetime.today(), self.message.getValue())
         self.Bind(wx.EVT_TIMER, self.onTimer, self.timer)
         counter = self.count_text.GetValue()
         if counter.isdigit():
