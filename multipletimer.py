@@ -3,6 +3,7 @@ import os
 import time
 import sys
 import wx
+import re
 
 class MessageFrame(wx.Frame):
     def __init__(self, parent, title, message="UP ON TIME"):
@@ -51,7 +52,7 @@ class MyApp(wx.App):
         message = wx.TextCtrl(top1panel, wx.ID_ANY)
 
         top2panel = wx.Panel(toppanel, wx.ID_ANY)
-        count_text = wx.TextCtrl(top2panel, wx.ID_ANY)
+        self.count_text = wx.TextCtrl(top2panel, wx.ID_ANY)
         button_1 = wx.Button(top2panel, wx.ID_ANY, "add alarm")
         button_1.Bind(wx.EVT_BUTTON, self.startTimer)
 
@@ -62,7 +63,7 @@ class MyApp(wx.App):
         layout_top1.Add(message, proportion=1, flag=wx.GROW)
 
         layout_top2 = wx.BoxSizer(wx.HORIZONTAL)
-        layout_top2.Add(count_text)
+        layout_top2.Add(self.count_text)
         layout_top2.Add(button_1)
 
         layout_top = wx.BoxSizer(wx.VERTICAL)
@@ -87,7 +88,28 @@ class MyApp(wx.App):
     def startTimer(self, event):
         self.timer = wx.Timer(self)
         self.Bind(wx.EVT_TIMER, self.onTimer, self.timer)
-        self.timer.Start(3)
+        counter = self.count_text.GetValue()
+        if counter.isdigit():
+            self.timer.Start(int(counter) * 1000)
+        else:
+            p = re.compile(r'([hm])')
+            items = p.split(counter)
+            #print items
+            num = 0
+            total = 0
+            for s in items:
+                if s.isdigit():
+                    num = int(s)
+                elif s == 'h':
+                    total = num * 60 * 60 + total
+                    num = 0
+                elif s == 'm':
+                    total = num * 60 + total
+                    num = 0
+            if num != 0:
+                total = num + total
+            #print total
+            self.timer.Start(total * 1000)
 
     def onTimer(self, event):
         childframe = MessageFrame(self.frame, "Alarm")
