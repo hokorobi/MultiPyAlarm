@@ -109,7 +109,8 @@ class MyApp(wx.App):
             if num != 0:
                 total = num + total
             #print total
-            self.timer.Start(total * 1000)
+            if total != 0:
+                self.timer.Start(total * 1000)
 
     def onTimer(self, event):
         childframe = MessageFrame(self.frame, "Alarm")
