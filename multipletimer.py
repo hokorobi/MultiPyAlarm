@@ -43,15 +43,41 @@ class MyApp(wx.App):
     def OnInit(self):
         self.frame = wx.Frame(None, wx.ID_ANY, "Multiple Timer", size = (300, 200))
         self.frame.CreateStatusBar()
-        panel = wx.Panel(self.frame, wx.ID_ANY)
+        basepanel = wx.Panel(self.frame, wx.ID_ANY)
 
-        button_1 = wx.Button(panel, wx.ID_ANY, "alarm")
+        toppanel = wx.Panel(basepanel, wx.ID_ANY, style = wx.BORDER_SUNKEN)
+
+        top1panel = wx.panel(toppanel, wx.ID_ANY)
+        message = wx.TextCtrl(top1panel, wx.ID_ANY)
+
+        top2panel = wx.panel(toppanel, wx.ID_ANY)
+        count_text = wx.TextCtrl(top2panel, wx.ID_ANY)
+        button_1 = wx.Button(top2panel, wx.ID_ANY, "add alarm")
         button_1.Bind(wx.EVT_BUTTON, self.startTimer)
 
-        layout = wx.BoxSizer(wx.VERTICAL)
-        layout.Add(button_1)
+        bottompanel = wx.Panel(basepanel, wx.ID_ANY, style = wx.BORDER_SUNKEN)
 
-        panel.SetSizer(layout)
+
+        layout_top1 = wx.BoxSizer(wx.HORIZONTAL)
+        layout_top1.Add(message, flag=wx.GROW)
+
+        layout_top2 = wx.BoxSizer(wx.HORIZONTAL)
+        layout_top2.Add(count_text)
+        layout_top2.Add(button_1)
+
+        layout_top = wx.BoxSizer(wx.HORIZONTAL)
+        layout_top.Add(top1panel, proportion=1, flag=wx.GROW)
+        layout_top.Add(top2panel, proportion=1, flag=wx.GROW)
+
+        layout = wx.BoxSizer(wx.VERTICAL)
+        layout.Add(toppanel, proportion=1, flag=wx.GROW)
+        layout.Add(bottompanel, proportion=1, flag=wx.GROW)
+        #layout.Add(button_1)
+
+        toppanel.SetSizer(layout_top1)
+        toppanel.SetSizer(layout_top2)
+        toppanel.SetSizer(layout_top)
+        basepanel.SetSizer(layout)
 
         self.frame.Show()
 
