@@ -63,9 +63,9 @@ class MyApp(wx.App):
 
 
         bottompanel = wx.Panel(basepanel, wx.ID_ANY, style = wx.BORDER_SUNKEN)
-        listbox = wx.ListBox(bottompanel, wx.ID_ANY, style=wx.LB_NEEDED_SB)
+        self.listbox = wx.ListBox(bottompanel, wx.ID_ANY, style=wx.LB_NEEDED_SB)
         layout_bottom = wx.BoxSizer(wx.HORIZONTAL)
-        layout_bottom.Add(listbox, proportion=1, flag=wx.GROW|wx.ALL, border=3)
+        layout_bottom.Add(self.listbox, proportion=1, flag=wx.GROW|wx.ALL, border=3)
 
         layout_top1 = wx.BoxSizer(wx.HORIZONTAL)
         layout_top1.Add(self.message, proportion=1, flag=wx.GROW)
@@ -128,13 +128,19 @@ class MyApp(wx.App):
 
     def onTimer(self, event):
         if self.timers:
+            array = list()
             #print self.timers
             for key, value in self.timers.items():
                 timeraddtime = value[1]
                 timer = value[2]
-                if timeraddtime + datetime.timedelta(seconds=timer) < datetime.datetime.today():
+                endtime = timeraddtime + datetime.timedelta(seconds=timer)
+                if endtime < datetime.datetime.today():
                     del self.timers[key]
                     MessageFrame(self.frame, "Alarm")
+                else:
+                    delta = endtime - datetime.datetime.today()
+                    array.append(endtime.strftime("%H:%M:%S "))
+                self.listbox.SetItems(array)
 
 if __name__ == "__main__":
     app = MyApp()
