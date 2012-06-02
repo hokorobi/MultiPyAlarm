@@ -8,6 +8,7 @@ import datetime
 from namedmutex import NamedMutex
 import yaml
 
+# 時間が来たらメッセージ用のウィンドウを表示
 class MessageFrame(wx.Frame):
     def __init__(self, parent, title, message="UP ON TIME"):
         wx.Frame.__init__(self, parent, title=title)
@@ -21,6 +22,7 @@ class MessageFrame(wx.Frame):
 
         self.alarm_move_window(self)
 
+    # ウィンドウを動かして目立たせる
     def alarm_move_window(self, event):
         pos = self.GetPosition()
         self.Move((pos[0] - 50, pos[1]))
@@ -46,9 +48,10 @@ class MessageFrame(wx.Frame):
 class MyApp(wx.App):
 
     def OnInit(self):
-        self.timernum = 0
-        self.timerlist = TimerList()
+        self.timernum = 0 # アラームタイマーの数
+        self.timerlist = TimerList() # アラームタイマーのリスト
 
+        # メインウィンドウ描画
         self.frame = wx.Frame(None, wx.ID_ANY, "Multiple Timer", size = (300, 200))
         self.frame.CreateStatusBar()
         basepanel = wx.Panel(self.frame, wx.ID_ANY)
@@ -83,7 +86,6 @@ class MyApp(wx.App):
         layout = wx.BoxSizer(wx.VERTICAL)
         layout.Add(toppanel, flag=wx.GROW)
         layout.Add(bottompanel, proportion=1, flag=wx.GROW)
-        #layout.Add(button_1)
 
         basepanel.SetSizer(layout)
         toppanel.SetSizer(layout_top)
@@ -95,11 +97,13 @@ class MyApp(wx.App):
 
         self.SetTopWindow(self.frame)
 
+        #タイマースタート
         self.timer = wx.Timer(self)
         self.timer.Start(1000)
         self.Bind(wx.EVT_TIMER, self.onTimer, self.timer)
         return True
 
+    # 画面の入力からアラームの時間を取得
     def getCounter(self):
         counter = self.count_text.GetValue()
         if counter.isdigit():
@@ -124,12 +128,16 @@ class MyApp(wx.App):
             #print total
             return total
 
+    # アラームタイマー追加
     def addTimer(self, event):
         self.timernum = self.timernum + 1
         timer = [self.timernum, datetime.datetime.today(), self.getCounter(), self.message.GetValue()]
         self.timerlist.add(self.timernum, timer)
 
     def onTimer(self, event):
+        # 一秒ごとに実行する処理
+        # タイマーリストの中から指定時間が経過したもののアラーム表示
+        # それ以外は画面の更新
         if self.timerlist:
             array = list()
             #print self.timerlist
@@ -145,6 +153,7 @@ class MyApp(wx.App):
                     array.append(endtime.strftime("%H:%M:%S "))
                 self.listbox.SetItems(array)
 
+# タイマーリストのファイル処理
 class TimerFile(object):
     def __init__(self):
         self.timerfile = 'timerlist'
@@ -180,7 +189,7 @@ class TimerList(object):
         del self.timerlist[num]
         self.timerfile.save(self.timerlist)
 
-# iterater fail
+# タイマーリストをイテレータとして使いたいけどできていない
 #    def next(self):
 #        self.timerlist.next()
 #
@@ -188,6 +197,7 @@ class TimerList(object):
 #        return self
 
 if __name__ == "__main__":
+    # 二重起動防止
     mut = NamedMutex("multipletimer", True, 0)
     if not mut.acret:
         exit()
