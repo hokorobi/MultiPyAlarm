@@ -47,8 +47,11 @@ class MyApp(wx.App):
 
     def OnInit(self):
         self.timernum = 0
-        self.timerlist = dict()
         self.timerfile = TimerFile()
+        if self.timerfile.data:
+            self.timerlist = self.timerfile.data
+        else:
+            self.timerlist = dict()
 
         self.frame = wx.Frame(None, wx.ID_ANY, "Multiple Timer", size = (300, 200))
         self.frame.CreateStatusBar()
@@ -150,10 +153,12 @@ class MyApp(wx.App):
 class TimerFile(object):
     def __init__(self):
         self.timerfile = 'timerlist'
+        self.load()
 
+    def load(self):
         try:
             f = open(self.timerfile, 'r')
-            data = yaml.load(f)
+            self.data = yaml.load(f)
             f.close()
         except IOError, (errno, strerror):
             if errno != 2: # not exists
