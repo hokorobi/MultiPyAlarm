@@ -23,7 +23,7 @@ _CloseHandle.restype = wintypes.BOOL
 class NamedMutex(object):
     """A named, system-wide mutex that can be acquired and released."""
 
-    def __init__(self, name, acquired=False):
+    def __init__(self, name, acquired=False, timeout=None):
         """Create named mutex with given name, also acquiring mutex if acquired is True.
         Mutex names are case sensitive, and a filename (with backslashes in it) is not a
         valid mutex name. Raises WindowsError on error.
@@ -36,7 +36,7 @@ class NamedMutex(object):
             raise ctypes.WinError()
         self.handle = ret
         if acquired:
-            self.acquire()
+            self.acret = self.acquire(timeout)
 
     def acquire(self, timeout=None):
         """Acquire ownership of the mutex, returning True if acquired. If a timeout

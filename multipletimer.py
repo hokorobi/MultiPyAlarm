@@ -5,6 +5,7 @@ import sys
 import wx
 import re
 import datetime
+from namedmutex import NamedMutex
 
 class MessageFrame(wx.Frame):
     def __init__(self, parent, title, message="UP ON TIME"):
@@ -143,5 +144,9 @@ class MyApp(wx.App):
                 self.listbox.SetItems(array)
 
 if __name__ == "__main__":
+    mut = NamedMutex("multipletimer", True, 0)
+    if not mut.acret:
+        exit()
+
     app = MyApp()
     app.MainLoop()
