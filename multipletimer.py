@@ -46,7 +46,7 @@ class MyApp(wx.App):
 
     def OnInit(self):
         self.timernum = 0
-        self.timers = dict()
+        self.timerlist = dict()
 
         self.frame = wx.Frame(None, wx.ID_ANY, "Multiple Timer", size = (300, 200))
         self.frame.CreateStatusBar()
@@ -125,18 +125,19 @@ class MyApp(wx.App):
 
     def addTimer(self, event):
         self.timernum = self.timernum + 1
-        self.timers[self.timernum] = [self.timernum, datetime.datetime.today(), self.getCounter(), self.message.GetValue()]
+        timer = [self.timernum, datetime.datetime.today(), self.getCounter(), self.message.GetValue()]
+        self.timerlist[self.timernum] = timer
 
     def onTimer(self, event):
-        if self.timers:
+        if self.timerlist:
             array = list()
-            #print self.timers
-            for key, value in self.timers.items():
+            #print self.timerlist
+            for key, value in self.timerlist.items():
                 timeraddtime = value[1]
                 timer = value[2]
                 endtime = timeraddtime + datetime.timedelta(seconds=timer)
                 if endtime < datetime.datetime.today():
-                    del self.timers[key]
+                    del self.timerlist[key]
                     MessageFrame(self.frame, "Alarm")
                 else:
                     delta = endtime - datetime.datetime.today()
