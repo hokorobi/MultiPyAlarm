@@ -47,11 +47,7 @@ class MyApp(wx.App):
 
     def OnInit(self):
         self.timernum = 0
-        self.timerfile = TimerFile()
-        if self.timerfile.data:
-            self.timerlist = self.timerfile.data
-        else:
-            self.timerlist = dict()
+        self.timerlist = TimerList()
 
         self.frame = wx.Frame(None, wx.ID_ANY, "Multiple Timer", size = (300, 200))
         self.frame.CreateStatusBar()
@@ -131,19 +127,18 @@ class MyApp(wx.App):
     def addTimer(self, event):
         self.timernum = self.timernum + 1
         timer = [self.timernum, datetime.datetime.today(), self.getCounter(), self.message.GetValue()]
-        self.timerlist[self.timernum] = timer
-        self.timerfile.save(self.timerlist)
+        self.timerlist.add(self.timernum, timer)
 
     def onTimer(self, event):
         if self.timerlist:
             array = list()
             #print self.timerlist
-            for key, value in self.timerlist.items():
+            for key, value in self.timerlist.timerlist.items():
                 timeraddtime = value[1]
                 timer = value[2]
                 endtime = timeraddtime + datetime.timedelta(seconds=timer)
                 if endtime < datetime.datetime.today():
-                    del self.timerlist[key]
+                    self.timerlist.delete(key)
                     MessageFrame(self.frame, "Alarm")
                 else:
                     delta = endtime - datetime.datetime.today()
@@ -168,6 +163,29 @@ class TimerFile(object):
         yaml.dump(timerlist, file(self.timerfile, 'wb'),
                   default_flow_style=False, encoding='utf8',
                   allow_unicode=True)
+
+class TimerList(object):
+    def __init__(self):
+        self.timerfile = TimerFile()
+        if self.timerfile.data:
+            self.timerlist = self.timerfile.data
+        else:
+            self.timerlist = dict()
+
+    def add(self, num, timer):
+        self.timerlist[num] = timer
+        self.timerfile.save(self.timerlist)
+
+    def delete(self, num):
+        del self.timerlist[num]
+        self.timerfile.save(self.timerlist)
+
+# iterater fail
+#    def next(self):
+#        self.timerlist.next()
+#
+#    def __iter__(self):
+#        return self
 
 if __name__ == "__main__":
     mut = NamedMutex("multipletimer", True, 0)
