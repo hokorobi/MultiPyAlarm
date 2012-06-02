@@ -6,6 +6,7 @@ import wx
 import re
 import datetime
 from namedmutex import NamedMutex
+import yaml
 
 class MessageFrame(wx.Frame):
     def __init__(self, parent, title, message="UP ON TIME"):
@@ -47,6 +48,7 @@ class MyApp(wx.App):
     def OnInit(self):
         self.timernum = 0
         self.timerlist = dict()
+        self.timerfile = TimerFile()
 
         self.frame = wx.Frame(None, wx.ID_ANY, "Multiple Timer", size = (300, 200))
         self.frame.CreateStatusBar()
@@ -127,6 +129,7 @@ class MyApp(wx.App):
         self.timernum = self.timernum + 1
         timer = [self.timernum, datetime.datetime.today(), self.getCounter(), self.message.GetValue()]
         self.timerlist[self.timernum] = timer
+        self.timerfile.save(self.timerlist)
 
     def onTimer(self, event):
         if self.timerlist:
@@ -143,6 +146,23 @@ class MyApp(wx.App):
                     delta = endtime - datetime.datetime.today()
                     array.append(endtime.strftime("%H:%M:%S "))
                 self.listbox.SetItems(array)
+
+class TimerFile(object):
+    def __init__(self):
+        self.timerfile = 'timerlist'
+
+        try:
+            f = open(self.timerfile, 'r')
+            data = yaml.load(f)
+            f.close()
+        except IOError, (errno, strerror):
+            if errno != 2: # not exists
+                raise
+
+    def save(self, timerlist):
+        yaml.dump(timerlist, file(self.timerfile, 'wb'),
+                  default_flow_style=False, encoding='utf8',
+                  allow_unicode=True)
 
 if __name__ == "__main__":
     mut = NamedMutex("multipletimer", True, 0)
