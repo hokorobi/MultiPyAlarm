@@ -118,9 +118,12 @@ class MyApp(wx.App):
     # 画面の入力からアラームの時間を取得
     def getCounter(self):
         counter = self.count_text.GetValue()
+        # 単行がなかったら秒扱い。
+        # todo 分にする
         if counter.isdigit():
             return int(counter)
         else:
+            # 単位が h で時間 m で分
             p = re.compile(r'([hm])')
             items = p.split(counter)
             #print items
@@ -143,17 +146,17 @@ class MyApp(wx.App):
     # アラームタイマー追加
     def addTimer(self, event):
         self.timernum = self.timernum + 1
-        timeraddtime = datetime.datetime.today()
+        starttime = datetime.datetime.today()
         remain = self.getCounter()
+        endtime = starttime + datetime.timedelta(seconds=remain)
         message = self.message.GetValue()
-        endtime = timeraddtime + datetime.timedelta(seconds=remain)
 
         #画面に追加
         index = self.listbox.InsertStringItem(sys.maxint, endtime.strftime("%H:%M:%S"))
         self.listbox.SetStringItem(index, 1, str(remain))
         self.listbox.SetStringItem(index, 2, message)
 
-        timer = [index, timeraddtime, remain, message]
+        timer = [index, starttime, endtime, message]
         self.timerlist.add(self.timernum, timer)
 
     def onTimer(self, event):
@@ -165,17 +168,16 @@ class MyApp(wx.App):
             #print self.timerlist
             for key, value in self.timerlist.timerlist.items():
                 index = value[0]
-                timeraddtime = value[1]
-                remain = value[2]
+                starttime = value[1]
+                endtime = value[2]
                 message = value[3]
-                endtime = timeraddtime + datetime.timedelta(seconds=remain)
                 if endtime < datetime.datetime.today():
                     self.timerlist.delete(key)
                     self.listbox.DeleteItem(index)
                     MessageFrame(self.frame, "Alarm", message)
                 else:
-                    delta = endtime - datetime.datetime.today()
-                    array.append([endtime.strftime("%H:%M:%S"), str(delta.seconds), message])
+                    remain = endtime - datetime.datetime.today()
+                    self.listbox.SetStringItem(index, 1, str(remain.seconds))
 
 # タイマーリストのファイル処理
 class TimerFile(object):
