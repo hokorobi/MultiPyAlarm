@@ -58,7 +58,6 @@ class MessageFrame(wx.Frame):
 class MyApp(wx.App):
 
     def OnInit(self):
-        self.timernum = 0 # アラームタイマーの数
         self.timerlist = TimerList() # アラームタイマーのリスト
 
         # メインウィンドウ描画
@@ -119,8 +118,6 @@ class MyApp(wx.App):
 
         # タイマーリストを画面のリストに追加
         for key, timer in self.timerlist.timerlist.items():
-            if self.timernum < key:
-                self.timernum = key
             newindex = self.addListBox(self.listbox, timer)
             self.timerlist.refreshIndex(key, newindex)
 
@@ -128,39 +125,10 @@ class MyApp(wx.App):
 
         self.SetTopWindow(self.frame)
 
-    # 画面の入力からアラームの時間を取得
-    def getCounter(self):
-        counter = self.count_text.GetValue()
-        # 単行がなかったら秒扱い。
-        # todo 分にする
-        if counter.isdigit():
-            return int(counter)
-        else:
-            # 単位が h で時間 m で分
-            p = re.compile(r'([hm])')
-            items = p.split(counter)
-            #print items
-            num = 0
-            total = 0
-            for s in items:
-                if s.isdigit():
-                    num = int(s)
-                elif s == 'h':
-                    total = num * 60 * 60 + total
-                    num = 0
-                elif s == 'm':
-                    total = num * 60 + total
-                    num = 0
-            if num != 0:
-                total = num + total
-            #print total
-            return total
-
     # アラームタイマー追加
     def addTimer(self, event):
-        self.timernum = self.timernum + 1
         starttime = datetime.datetime.today()
-        remain = self.getCounter()
+        remain = TimerList.getRemain(self.count_text.GetValue())
         endtime = starttime + datetime.timedelta(seconds=remain)
         message = self.message.GetValue()
         timer = {"index": 0, "starttime": starttime, "endtime": endtime, "message": message} # index:0 は仮
@@ -169,7 +137,7 @@ class MyApp(wx.App):
         index = self.addListBox(self.listbox, timer)
         timer["index"] = index
 
-        self.timerlist.add(self.timernum, timer)
+        self.timerlist.add(timer)
 
     def addListBox(self, listbox, timer):
         remain = timer["endtime"] - datetime.datetime.today()
@@ -224,12 +192,14 @@ class TimerList(object):
     def __init__(self):
         self.timerfile = TimerFile()
         self.timerlist = self.timerfile.getTimerList()
+        self.timernum = self.getTimerNum()
         # 起動時に過ぎてしまっているアラームは削除
         # todo? 何を削除したか表示する
         self.deleteOutside()
 
-    def add(self, num, timer):
-        self.timerlist[num] = timer
+    def add(self, timer):
+        self.timernum = self.timernum + 1
+        self.timerlist[self.timernum] = timer
         self.timerfile.save(self.timerlist)
 
     def delete(self, num, index):
@@ -250,6 +220,40 @@ class TimerList(object):
 
     def refreshIndex(self, key, index):
         self.timerlist[key]["index"] = index
+
+    def getTimerNum(self):
+        num = 0
+        if self.timerlist:
+            for key, value in self.timerlist.items():
+                if num < key:
+                    num = key
+        return num
+
+    @classmethod
+    def getRemain(self, counter):
+        if counter.isdigit():
+            return int(counter)
+        else:
+            # 単位が h で時間 m で分
+            p = re.compile(r'([hm])')
+            items = p.split(counter)
+            #print items
+            num = 0
+            total = 0
+            for s in items:
+                if s.isdigit():
+                    num = int(s)
+                elif s == 'h':
+                    total = num * 60 * 60 + total
+                    num = 0
+                elif s == 'm':
+                    total = num * 60 + total
+                    num = 0
+            if num != 0:
+                total = num + total
+            #print total
+            return total
+
 
 # タイマーリストをイテレータとして使いたいけどできていない
 #    def next(self):
