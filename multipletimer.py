@@ -144,10 +144,11 @@ class MyApp(wx.App):
             for key, value in self.timerlist.timerlist.items():
                 timeraddtime = value[1]
                 timer = value[2]
+                message = value[3]
                 endtime = timeraddtime + datetime.timedelta(seconds=timer)
                 if endtime < datetime.datetime.today():
                     self.timerlist.delete(key)
-                    MessageFrame(self.frame, "Alarm")
+                    MessageFrame(self.frame, "Alarm", message)
                 else:
                     delta = endtime - datetime.datetime.today()
                     array.append(endtime.strftime("%H:%M:%S "))
