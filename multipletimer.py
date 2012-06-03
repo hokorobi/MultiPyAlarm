@@ -239,6 +239,9 @@ class TimerList(object):
         if counter.isdigit():
             return int(counter)
         else:
+            # todo 指定時刻 hh:mm, hh:mm:ss も扱えるように
+            # todo? d で日数も扱えるように
+            # todo? yyyy-mm-dd も扱えるように
             # 単位が h で時間 m で分
             p = re.compile(r'([hm])')
             items = p.split(counter)
