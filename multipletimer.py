@@ -263,6 +263,20 @@ class TimerList(object):
 #        return self
 
 if __name__ == "__main__":
+    # コマンドラインからタイマー追加
+    argc = len(sys.argv)
+    if argc > 1:
+        remain = TimerList.getRemain(sys.argv[1])
+        starttime = datetime.datetime.today()
+        endtime = starttime + datetime.timedelta(seconds=remain)
+        if argc > 2:
+            message = sys.argv[2]
+        else:
+            message = ""
+        timerlist = TimerList()
+        timer = {"index": 0, "starttime": starttime, "endtime": endtime, "message": message}
+        timerlist.add(timer)
+
     # 二重起動防止
     mut = NamedMutex("multipletimer", True, 0)
     if not mut.acret:
