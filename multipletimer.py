@@ -229,6 +229,9 @@ class TimerList(object):
     def __init__(self):
         self.timerfile = TimerFile()
         self.timerlist = self.timerfile.getTimerList()
+        # 起動時に過ぎてしまっているアラームは削除
+        # todo? 何を削除したか表示する
+        self.deleteOutside()
 
     def add(self, num, timer):
         self.timerlist[num] = timer
@@ -242,6 +245,12 @@ class TimerList(object):
             if value[0] > index:
                 value[0] = value[0] - 1
                 self.timerlist[key] = value
+        self.timerfile.save(self.timerlist)
+
+    def deleteOutside(self):
+        for key, timer in self.timerlist.items():
+            if timer[2] < datetime.datetime.today():
+                del self.timerlist[key]
         self.timerfile.save(self.timerlist)
 
     def refreshIndex(self, key, index):
