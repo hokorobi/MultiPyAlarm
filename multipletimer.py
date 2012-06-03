@@ -60,6 +60,16 @@ class MyApp(wx.App):
         self.timerlist = TimerList() # アラームタイマーのリスト
 
         # メインウィンドウ描画
+        self.drawInit()
+
+        #タイマースタート
+        self.timer = wx.Timer(self)
+        self.timer.Start(1000)
+        self.Bind(wx.EVT_TIMER, self.onTimer, self.timer)
+        return True
+
+    # メインウィンドウ描画
+    def drawInit(self):
         self.frame = wx.Frame(None, wx.ID_ANY, "Multiple Timer", size = (300, 200))
         self.frame.CreateStatusBar()
         basepanel = wx.Panel(self.frame, wx.ID_ANY)
@@ -105,15 +115,16 @@ class MyApp(wx.App):
         top2panel.SetSizer(layout_top2)
         bottompanel.SetSizer(layout_bottom)
 
+        # タイマーリストを画面のリストに追加
+        for key, timer in self.timerlist.timerlist.items():
+            if self.timernum < key:
+                self.timernum = key
+            newindex = self.addListBox(self.listbox, timer)
+            self.timerlist.refreshIndex(key, newindex)
+
         self.frame.Show()
 
         self.SetTopWindow(self.frame)
-
-        #タイマースタート
-        self.timer = wx.Timer(self)
-        self.timer.Start(1000)
-        self.Bind(wx.EVT_TIMER, self.onTimer, self.timer)
-        return True
 
     # 画面の入力からアラームの時間を取得
     def getCounter(self):
@@ -150,14 +161,23 @@ class MyApp(wx.App):
         remain = self.getCounter()
         endtime = starttime + datetime.timedelta(seconds=remain)
         message = self.message.GetValue()
+        timer = [0, starttime, endtime, message] # 0 は仮
 
         #画面に追加
-        index = self.listbox.InsertStringItem(sys.maxint, endtime.strftime("%H:%M:%S"))
-        self.listbox.SetStringItem(index, 1, str(remain))
-        self.listbox.SetStringItem(index, 2, message)
+        index = self.addListBox(self.listbox, timer)
+        timer[0] = index
 
-        timer = [index, starttime, endtime, message]
         self.timerlist.add(self.timernum, timer)
+
+    def addListBox(self, listbox, timer):
+        endtime = timer[2]
+        message = timer[3]
+        remain = endtime - datetime.datetime.today()
+        index = listbox.InsertStringItem(sys.maxint, endtime.strftime("%H:%M:%S"))
+        listbox.SetStringItem(index, 1, str(remain.seconds))
+        listbox.SetStringItem(index, 2, message)
+        return index
+
 
     def onTimer(self, event):
         # 一秒ごとに実行する処理
@@ -172,7 +192,7 @@ class MyApp(wx.App):
                 endtime = value[2]
                 message = value[3]
                 if endtime < datetime.datetime.today():
-                    self.timerlist.delete(key)
+                    self.timerlist.delete(key, index)
                     self.listbox.DeleteItem(index)
                     MessageFrame(self.frame, "Alarm", message)
                 else:
@@ -211,9 +231,18 @@ class TimerList(object):
         self.timerlist[num] = timer
         self.timerfile.save(self.timerlist)
 
-    def delete(self, num):
+    def delete(self, num, index):
         del self.timerlist[num]
+        # 画面のリストのインデックスを更新
+        # 更新しないとインデックスの場所がずれる
+        for key, value in self.timerlist.items():
+            if value[0] > index:
+                value[0] = value[0] - 1
+                self.timerlist[key] = value
         self.timerfile.save(self.timerlist)
+
+    def refreshIndex(self, key, index):
+        self.timerlist[key][0] = index
 
 # タイマーリストをイテレータとして使いたいけどできていない
 #    def next(self):
