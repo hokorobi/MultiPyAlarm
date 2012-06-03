@@ -186,11 +186,11 @@ class MyApp(wx.App):
         if self.timerlist:
             array = list()
             #print self.timerlist
-            for key, value in self.timerlist.timerlist.items():
-                index = value[0]
-                starttime = value[1]
-                endtime = value[2]
-                message = value[3]
+            for key, timer in self.timerlist.timerlist.items():
+                index = timer[0]
+                starttime = timer[1]
+                endtime = timer[2]
+                message = timer[3]
                 if endtime < datetime.datetime.today():
                     self.timerlist.delete(key, index)
                     self.listbox.DeleteItem(index)
@@ -241,10 +241,10 @@ class TimerList(object):
         del self.timerlist[num]
         # 画面のリストのインデックスを更新
         # 更新しないとインデックスの場所がずれる
-        for key, value in self.timerlist.items():
-            if value[0] > index:
-                value[0] = value[0] - 1
-                self.timerlist[key] = value
+        for key, timer in self.timerlist.items():
+            if timer[0] > index:
+                timer[0] = timer[0] - 1
+                self.timerlist[key] = timer
         self.timerfile.save(self.timerlist)
 
     def deleteOutside(self):
