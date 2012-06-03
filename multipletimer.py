@@ -161,17 +161,17 @@ class MyApp(wx.App):
         remain = self.getCounter()
         endtime = starttime + datetime.timedelta(seconds=remain)
         message = self.message.GetValue()
-        timer = [0, starttime, endtime, message] # 0 は仮
+        timer = {"index": 0, "starttime": starttime, "endtime": endtime, "message": message} # index:0 は仮
 
         #画面に追加
         index = self.addListBox(self.listbox, timer)
-        timer[0] = index
+        timer["index"] = index
 
         self.timerlist.add(self.timernum, timer)
 
     def addListBox(self, listbox, timer):
-        endtime = timer[2]
-        message = timer[3]
+        endtime = timer["endtime"]
+        message = timer["message"]
         remain = endtime - datetime.datetime.today()
         index = listbox.InsertStringItem(sys.maxint, endtime.strftime("%H:%M:%S"))
         listbox.SetStringItem(index, 1, str(remain.seconds))
@@ -184,13 +184,12 @@ class MyApp(wx.App):
         # タイマーリストの中から指定時間が経過したもののアラーム表示
         # それ以外は画面の更新
         if self.timerlist:
-            array = list()
             #print self.timerlist
             for key, timer in self.timerlist.timerlist.items():
-                index = timer[0]
-                starttime = timer[1]
-                endtime = timer[2]
-                message = timer[3]
+                index = timer["index"]
+                starttime = timer["starttime"]
+                endtime = timer["endtime"]
+                message = timer["message"]
                 if endtime < datetime.datetime.today():
                     self.timerlist.delete(key, index)
                     self.listbox.DeleteItem(index)
@@ -242,19 +241,19 @@ class TimerList(object):
         # 画面のリストのインデックスを更新
         # 更新しないとインデックスの場所がずれる
         for key, timer in self.timerlist.items():
-            if timer[0] > index:
-                timer[0] = timer[0] - 1
+            if timer["index"] > index:
+                timer["index"] = timer["index"] - 1
                 self.timerlist[key] = timer
         self.timerfile.save(self.timerlist)
 
     def deleteOutside(self):
         for key, timer in self.timerlist.items():
-            if timer[2] < datetime.datetime.today():
+            if timer["endtime"] < datetime.datetime.today():
                 del self.timerlist[key]
         self.timerfile.save(self.timerlist)
 
     def refreshIndex(self, key, index):
-        self.timerlist[key][0] = index
+        self.timerlist[key]["index"] = index
 
 # タイマーリストをイテレータとして使いたいけどできていない
 #    def next(self):
