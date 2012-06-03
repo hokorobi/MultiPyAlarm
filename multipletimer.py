@@ -143,7 +143,17 @@ class MyApp(wx.App):
     # アラームタイマー追加
     def addTimer(self, event):
         self.timernum = self.timernum + 1
-        timer = [self.timernum, datetime.datetime.today(), self.getCounter(), self.message.GetValue()]
+        timeraddtime = datetime.datetime.today()
+        remain = self.getCounter()
+        message = self.message.GetValue()
+        endtime = timeraddtime + datetime.timedelta(seconds=remain)
+
+        #画面に追加
+        index = self.listbox.InsertStringItem(sys.maxint, endtime.strftime("%H:%M:%S"))
+        self.listbox.SetStringItem(index, 1, str(remain))
+        self.listbox.SetStringItem(index, 2, message)
+
+        timer = [index, timeraddtime, remain, message]
         self.timerlist.add(self.timernum, timer)
 
     def onTimer(self, event):
@@ -154,20 +164,18 @@ class MyApp(wx.App):
             array = list()
             #print self.timerlist
             for key, value in self.timerlist.timerlist.items():
+                index = value[0]
                 timeraddtime = value[1]
-                timer = value[2]
+                remain = value[2]
                 message = value[3]
-                endtime = timeraddtime + datetime.timedelta(seconds=timer)
+                endtime = timeraddtime + datetime.timedelta(seconds=remain)
                 if endtime < datetime.datetime.today():
                     self.timerlist.delete(key)
+                    self.listbox.DeleteItem(index)
                     MessageFrame(self.frame, "Alarm", message)
                 else:
                     delta = endtime - datetime.datetime.today()
                     array.append([endtime.strftime("%H:%M:%S"), str(delta.seconds), message])
-            for i in array:
-                index = self.listbox.InsertStringItem(sys.maxint, i[0])
-                self.listbox.SetStringItem(index, 1, i[1])
-                self.listbox.SetStringItem(index, 2, i[2])
 
 # タイマーリストのファイル処理
 class TimerFile(object):
