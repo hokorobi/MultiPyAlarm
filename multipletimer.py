@@ -87,7 +87,7 @@ class MyApp(wx.App):
 
         bottompanel = wx.Panel(basepanel, wx.ID_ANY, style = wx.BORDER_SUNKEN)
         self.listbox = CheckListCtrl(bottompanel)
-        self.listbox.InsertColumn(0, 'alarm', width=140)
+        self.listbox.InsertColumn(0, 'alarm', width=80)
         self.listbox.InsertColumn(1, 'remain')
         self.listbox.InsertColumn(2, 'message')
         
@@ -170,12 +170,10 @@ class MyApp(wx.App):
         self.timerlist.add(self.timernum, timer)
 
     def addListBox(self, listbox, timer):
-        endtime = timer["endtime"]
-        message = timer["message"]
-        remain = endtime - datetime.datetime.today()
-        index = listbox.InsertStringItem(sys.maxint, endtime.strftime("%H:%M:%S"))
+        remain = timer["endtime"] - datetime.datetime.today()
+        index = listbox.InsertStringItem(sys.maxint, timer["endtime"].strftime("%H:%M:%S"))
         listbox.SetStringItem(index, 1, str(remain.seconds))
-        listbox.SetStringItem(index, 2, message)
+        listbox.SetStringItem(index, 2, timer["message"])
         return index
 
 
@@ -186,17 +184,13 @@ class MyApp(wx.App):
         if self.timerlist:
             #print self.timerlist
             for key, timer in self.timerlist.timerlist.items():
-                index = timer["index"]
-                starttime = timer["starttime"]
-                endtime = timer["endtime"]
-                message = timer["message"]
-                if endtime < datetime.datetime.today():
-                    self.timerlist.delete(key, index)
-                    self.listbox.DeleteItem(index)
-                    MessageFrame(self.frame, "Alarm", message)
+                if timer["endtime"] < datetime.datetime.today():
+                    self.timerlist.delete(key, timer["index"])
+                    self.listbox.DeleteItem(timer["index"])
+                    MessageFrame(self.frame, "Alarm", timer["message"])
                 else:
-                    remain = endtime - datetime.datetime.today()
-                    self.listbox.SetStringItem(index, 1, str(remain.seconds))
+                    remain = timer["endtime"] - datetime.datetime.today()
+                    self.listbox.SetStringItem(timer["index"], 1, str(remain.seconds))
 
 # タイマーリストのファイル処理
 class TimerFile(object):
