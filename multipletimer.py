@@ -219,13 +219,16 @@ class TimerFile(object):
                   default_flow_style=False, encoding='utf8',
                   allow_unicode=True)
 
+    def getTimerList(self):
+        if self.data:
+            return self.data
+        else:
+            return dict()
+
 class TimerList(object):
     def __init__(self):
         self.timerfile = TimerFile()
-        if self.timerfile.data:
-            self.timerlist = self.timerfile.data
-        else:
-            self.timerlist = dict()
+        self.timerlist = self.timerfile.getTimerList()
 
     def add(self, num, timer):
         self.timerlist[num] = timer
