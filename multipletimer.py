@@ -126,17 +126,15 @@ class MyApp(wx.App):
         self.SetTopWindow(self.frame)
 
     # アラームタイマー追加
+    # 追加するのはファイルのみ
+    # 画面への反映は、onTimer で
     def addTimer(self, event):
         starttime = datetime.datetime.today()
         remain = TimerList.getRemain(self.count_text.GetValue())
         endtime = starttime + datetime.timedelta(seconds=remain)
         message = self.message.GetValue()
-        timer = {"index": 0, "starttime": starttime, "endtime": endtime, "message": message} # index:0 は仮
-
-        #画面に追加
-        index = self.addListBox(self.listbox, timer)
-        timer["index"] = index
-
+        # index が空のものは画面未反映
+        timer = {"index": "", "starttime": starttime, "endtime": endtime, "message": message} # index:0 は仮
         self.timerlist.add(timer)
 
     def addListBox(self, listbox, timer):
@@ -154,10 +152,16 @@ class MyApp(wx.App):
         if self.timerlist:
             #print self.timerlist
             for key, timer in self.timerlist.timerlist.items():
+                # 画面に追加されていないタイマーを追加
+                if timer["index"] == "":
+                    index = self.addListBox(self.listbox, timer)
+                    self.timerlist.refreshIndex(key, index)
+                # 時間になったタイマーをアラーム
                 if timer["endtime"] < datetime.datetime.today():
                     self.timerlist.delete(key, timer["index"])
                     self.listbox.DeleteItem(timer["index"])
                     MessageFrame(self.frame, "Alarm", timer["message"])
+                # 時間になっていないタイマーの画面更新
                 else:
                     remain = timer["endtime"] - datetime.datetime.today()
                     self.listbox.SetStringItem(timer["index"], 1, str(remain.seconds))
@@ -220,6 +224,7 @@ class TimerList(object):
 
     def refreshIndex(self, key, index):
         self.timerlist[key]["index"] = index
+        self.timerfile.save(self.timerlist)
 
     def getTimerNum(self):
         num = 0
@@ -274,7 +279,7 @@ if __name__ == "__main__":
         else:
             message = ""
         timerlist = TimerList()
-        timer = {"index": 0, "starttime": starttime, "endtime": endtime, "message": message}
+        timer = {"index": "", "starttime": starttime, "endtime": endtime, "message": message}
         timerlist.add(timer)
 
     # 二重起動防止
