@@ -7,6 +7,14 @@ import re
 import datetime
 from namedmutex import NamedMutex
 import yaml
+from wx.lib.mixins.listctrl import CheckListCtrlMixin, ListCtrlAutoWidthMixin
+
+# アラームリストの画面表示
+class CheckListCtrl(wx.ListCtrl, CheckListCtrlMixin, ListCtrlAutoWidthMixin):
+    def __init__(self, parent):
+        wx.ListCtrl.__init__(self, parent, -1, style=wx.LC_REPORT | wx.SUNKEN_BORDER)
+        CheckListCtrlMixin.__init__(self)
+        ListCtrlAutoWidthMixin.__init__(self)
 
 # 時間が来たらメッセージ用のウィンドウを表示
 class MessageFrame(wx.Frame):
@@ -68,7 +76,11 @@ class MyApp(wx.App):
 
 
         bottompanel = wx.Panel(basepanel, wx.ID_ANY, style = wx.BORDER_SUNKEN)
-        self.listbox = wx.ListBox(bottompanel, wx.ID_ANY, style=wx.LB_NEEDED_SB)
+        self.listbox = CheckListCtrl(bottompanel)
+        self.listbox.InsertColumn(0, 'alarm', width=140)
+        self.listbox.InsertColumn(1, 'remain')
+        self.listbox.InsertColumn(2, 'message')
+        
         layout_bottom = wx.BoxSizer(wx.HORIZONTAL)
         layout_bottom.Add(self.listbox, proportion=1, flag=wx.GROW|wx.ALL, border=3)
 
@@ -151,8 +163,11 @@ class MyApp(wx.App):
                     MessageFrame(self.frame, "Alarm", message)
                 else:
                     delta = endtime - datetime.datetime.today()
-                    array.append(endtime.strftime("%H:%M:%S "))
-                self.listbox.SetItems(array)
+                    array.append([endtime.strftime("%H:%M:%S"), str(delta.seconds), message])
+            for i in array:
+                index = self.listbox.InsertStringItem(sys.maxint, i[0])
+                self.listbox.SetStringItem(index, 1, i[1])
+                self.listbox.SetStringItem(index, 2, i[2])
 
 # タイマーリストのファイル処理
 class TimerFile(object):
