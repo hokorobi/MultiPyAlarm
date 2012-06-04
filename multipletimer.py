@@ -85,8 +85,10 @@ class MyApp(wx.App):
 
         top2panel = wx.Panel(toppanel, wx.ID_ANY)
         self.count_text = wx.TextCtrl(top2panel, wx.ID_ANY)
-        button_1 = wx.Button(top2panel, wx.ID_ANY, "add alarm")
-        button_1.Bind(wx.EVT_BUTTON, self.addTimer)
+        button_add = wx.Button(top2panel, wx.ID_ANY, "add")
+        button_add.Bind(wx.EVT_BUTTON, self.addTimer)
+        button_del = wx.Button(top2panel, wx.ID_ANY, "del")
+        button_del.Bind(wx.EVT_BUTTON, self.delTimer)
 
 
         bottompanel = wx.Panel(basepanel, wx.ID_ANY, style = wx.BORDER_SUNKEN)
@@ -103,7 +105,8 @@ class MyApp(wx.App):
 
         layout_top2 = wx.BoxSizer(wx.HORIZONTAL)
         layout_top2.Add(self.count_text)
-        layout_top2.Add(button_1)
+        layout_top2.Add(button_add)
+        layout_top2.Add(button_del)
 
         layout_top = wx.BoxSizer(wx.VERTICAL)
         layout_top.Add(top1panel, flag=wx.GROW)
@@ -139,6 +142,9 @@ class MyApp(wx.App):
         # index が空のものは画面未反映
         timer = {"index": "", "starttime": starttime, "endtime": endtime, "message": message} # index:0 は仮
         self.timerlist.add(timer)
+
+    def delTimer(self, event):
+        pass
 
     def addListBox(self, listbox, timer):
         remain = timer["endtime"] - datetime.datetime.today()
