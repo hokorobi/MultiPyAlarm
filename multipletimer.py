@@ -75,6 +75,8 @@ class MyApp(wx.App):
     # メインウィンドウ描画
     def drawInit(self):
         self.frame = wx.Frame(None, wx.ID_ANY, "Multiple Timer", size = (300, 200))
+        icon = wx.Icon('MultiPyAlarm.ico', wx.BITMAP_TYPE_ICO)
+        self.frame.SetIcon(icon)
         self.frame.CreateStatusBar()
         basepanel = wx.Panel(self.frame, wx.ID_ANY)
 
