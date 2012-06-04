@@ -144,7 +144,13 @@ class MyApp(wx.App):
         self.timerlist.add(timer)
 
     def delTimer(self, event):
-        pass
+        # todo ファイルの更新チェック
+        num = self.listbox.GetItemCount()
+        # range(num) だと削除した timer の分だけ範囲外になるので逆から
+        for i in range(num-1, -1, -1):
+            if self.listbox.IsChecked(i):
+                self.timerlist.deleteIndex(i)
+                self.listbox.DeleteItem(i)
 
     def addListBox(self, listbox, timer):
         remain = timer["endtime"] - datetime.datetime.today()
@@ -252,6 +258,17 @@ class TimerList(object):
         # 画面のリストのインデックスを更新
         # 更新しないとインデックスの場所がずれる
         for key, timer in self.timerlist.items():
+            if timer["index"] > index:
+                timer["index"] = timer["index"] - 1
+                self.timerlist[key] = timer
+        self.timerfile.save(self.timerlist)
+
+    def deleteIndex(self, index):
+        # 画面のリストのインデックスを更新
+        # 更新しないとインデックスの場所がずれる
+        for key, timer in self.timerlist.items():
+            if timer["index"] == index:
+                del self.timerlist[key]
             if timer["index"] > index:
                 timer["index"] = timer["index"] - 1
                 self.timerlist[key] = timer
