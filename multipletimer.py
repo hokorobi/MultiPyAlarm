@@ -8,6 +8,7 @@ import datetime
 from namedmutex import NamedMutex
 import yaml
 from wx.lib.mixins.listctrl import CheckListCtrlMixin, ListCtrlAutoWidthMixin
+import win32api
 
 # アラームリストの画面表示
 class CheckListCtrl(wx.ListCtrl, CheckListCtrlMixin, ListCtrlAutoWidthMixin):
@@ -75,6 +76,11 @@ class MyApp(wx.App):
     # メインウィンドウ描画
     def drawInit(self):
         self.frame = wx.Frame(None, wx.ID_ANY, "Multiple Timer", size = (300, 200))
+
+        exeName = win32api.GetModuleFileName(win32api.GetModuleHandle(None))
+        icon = wx.Icon(exeName, wx.BITMAP_TYPE_ICO)
+        self.frame.SetIcon(icon)
+
         self.frame.CreateStatusBar()
         basepanel = wx.Panel(self.frame, wx.ID_ANY)
 
