@@ -218,6 +218,7 @@ class TimerFile(object):
             f.close()
             self.mtime = os.path.getmtime(self.timerfile)
         except IOError, (errno, strerror):
+            self.data = dict()
             if errno != 2: # not exists
                 raise
 
@@ -228,10 +229,7 @@ class TimerFile(object):
         self.mtime = os.path.getmtime(self.timerfile)
 
     def getTimerList(self):
-        if self.data:
-            return self.data
-        else:
-            return dict()
+        return self.data
 
     def isChanged(self):
         if self.mtime < os.path.getmtime(self.timerfile):
