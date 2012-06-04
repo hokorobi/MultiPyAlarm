@@ -250,13 +250,13 @@ class TimerList(object):
     @classmethod
     def getRemain(self, counter):
         if counter.isdigit():
-            return int(counter)
+            return int(counter) * 60
         else:
             # todo 指定時刻 hh:mm, hh:mm:ss も扱えるように
             # todo? d で日数も扱えるように
             # todo? yyyy-mm-dd も扱えるように
-            # 単位が h で時間 m で分
-            p = re.compile(r'([hm])')
+            # 単位が h で時間。それ以外の数字は分
+            p = re.compile(r'([h])')
             items = p.split(counter)
             #print items
             num = 0
@@ -267,11 +267,8 @@ class TimerList(object):
                 elif s == 'h':
                     total = num * 60 * 60 + total
                     num = 0
-                elif s == 'm':
-                    total = num * 60 + total
-                    num = 0
             if num != 0:
-                total = num + total
+                total = num * 60 + total
             #print total
             return total
 
