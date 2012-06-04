@@ -19,7 +19,8 @@ class CheckListCtrl(wx.ListCtrl, CheckListCtrlMixin, ListCtrlAutoWidthMixin):
 # 時間が来たらメッセージ用のウィンドウを表示
 class MessageFrame(wx.Frame):
     def __init__(self, parent, title, message):
-        wx.Frame.__init__(self, parent, title=title)
+        style = wx.STAY_ON_TOP|wx.DEFAULT_FRAME_STYLE
+        wx.Frame.__init__(self, parent, title=title, style=style)
 
         if not message:
             message = "UP ON TIME"
