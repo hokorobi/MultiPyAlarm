@@ -78,7 +78,7 @@ class MyApp(wx.App):
         self.frame = wx.Frame(None, wx.ID_ANY, "Multiple Timer", size = (300, 200))
 
         exeName = win32api.GetModuleFileName(win32api.GetModuleHandle(None))
-        icon = wx.Icon(exeName, wx.BITMAP_TYPE_ICO)
+        icon = wx.Icon(exeName + ";0", wx.BITMAP_TYPE_ICO)
         self.frame.SetIcon(icon)
 
         self.frame.CreateStatusBar()

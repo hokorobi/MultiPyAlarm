@@ -6,4 +6,4 @@ setup(options = {"py2exe": {
                             'optimize': 2,
                             'compressed': True}},
       windows = [{'script': 'multipletimer.py',
-                  'icon_resources': [(1, 'MultiPyAlarm.ico')]}], zipfile=None)
+                  'icon_resources': [(0, 'MultiPyAlarm.ico')]}], zipfile=None)
