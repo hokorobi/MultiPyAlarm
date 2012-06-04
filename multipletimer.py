@@ -346,7 +346,7 @@ if __name__ == "__main__":
     # 二重起動防止
     mut = NamedMutex("multipletimer", True, 0)
     if not mut.acret:
-        exit()
+        sys.exit()
 
     app = MyApp()
     app.MainLoop()
