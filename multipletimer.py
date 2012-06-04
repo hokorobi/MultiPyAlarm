@@ -149,6 +149,11 @@ class MyApp(wx.App):
         # 一秒ごとに実行する処理
         # タイマーリストの中から指定時間が経過したもののアラーム表示
         # それ以外は画面の更新
+
+        # ファイルの更新があれば読み込み
+        self.timerlist.update()
+        # このあと timerlist ファイルが保存されるまでの間にファイルの更新があっても無視。
+        # ファイルのロックをした方がよいかも。現実的には大丈夫だろうけど。
         if self.timerlist:
             #print self.timerlist
             for key, timer in self.timerlist.timerlist.items():
@@ -177,6 +182,7 @@ class TimerFile(object):
             f = open(self.timerfile, 'r')
             self.data = yaml.load(f)
             f.close()
+            self.mtime = os.path.getmtime(self.timerfile)
         except IOError, (errno, strerror):
             if errno != 2: # not exists
                 raise
@@ -185,12 +191,19 @@ class TimerFile(object):
         yaml.dump(timerlist, file(self.timerfile, 'wb'),
                   default_flow_style=False, encoding='utf8',
                   allow_unicode=True)
+        self.mtime = os.path.getmtime(self.timerfile)
 
     def getTimerList(self):
         if self.data:
             return self.data
         else:
             return dict()
+
+    def isChanged(self):
+        if self.mtime < os.path.getmtime(self.timerfile):
+            return True
+        else:
+            return False
 
 class TimerList(object):
     def __init__(self):
@@ -262,6 +275,10 @@ class TimerList(object):
             #print total
             return total
 
+    def update(self):
+        if self.timerfile.isChanged():
+            self.timerfile.load()
+            self.timerlist = self.timerfile.getTimerList()
 
 # タイマーリストをイテレータとして使いたいけどできていない
 #    def next(self):
