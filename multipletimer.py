@@ -140,7 +140,7 @@ class MyApp(wx.App):
     def addListBox(self, listbox, timer):
         remain = timer["endtime"] - datetime.datetime.today()
         index = listbox.InsertStringItem(sys.maxint, timer["endtime"].strftime("%H:%M:%S"))
-        listbox.SetStringItem(index, 1, str(remain.seconds))
+        listbox.SetStringItem(index, 1, MyApp.ListBoxTime(remain))
         listbox.SetStringItem(index, 2, timer["message"])
         return index
 
@@ -169,7 +169,26 @@ class MyApp(wx.App):
                 # 時間になっていないタイマーの画面更新
                 else:
                     remain = timer["endtime"] - datetime.datetime.today()
-                    self.listbox.SetStringItem(timer["index"], 1, str(remain.seconds))
+                    self.listbox.SetStringItem(timer["index"], 1, MyApp.ListBoxTime(remain))
+
+    # リストボックスの remain に表示する時間を生成
+    @classmethod
+    def ListBoxTime(self, timedelta):
+        days = timedelta.days
+        hours = timedelta.seconds / 60 / 60
+        seconds = timedelta.seconds - hours * 60 * 60
+        minutes = seconds / 60
+        seconds = seconds - minutes * 60
+
+        time = ""
+        if days:
+            time = "{0}d ".format(days)
+        if hours:
+            time = "{0}{1:>02d}:".format(time, hours)
+        if minutes:
+            time = "{0}{1:>02d}:".format(time, minutes)
+        time = "{0}{1:>02d}".format(time, seconds)
+        return time
 
 # タイマーリストのファイル処理
 class TimerFile(object):
@@ -288,9 +307,9 @@ if __name__ == "__main__":
     # コマンドラインからタイマー追加
     argc = len(sys.argv)
     if argc > 1:
-        remain = TimerList.getRemain(sys.argv[1])
+        seconds = TimerList.getRemain(sys.argv[1])
         starttime = datetime.datetime.today()
-        endtime = starttime + datetime.timedelta(seconds=remain)
+        endtime = starttime + datetime.timedelta(seconds=seconds)
         if argc > 2:
             message = sys.argv[2]
         else:
