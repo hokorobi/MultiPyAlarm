@@ -5,4 +5,4 @@ setup(options = {"py2exe": {
                             'bundle_files': 1,
                             'optimize': 2,
                             'compressed': True}},
-      windows = ['multipletimer.py'], zipfile=None)
+      windows = ['MultiPyAlarm.py'], zipfile=None)

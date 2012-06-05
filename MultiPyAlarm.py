@@ -60,12 +60,11 @@ class MessageFrame(wx.Frame):
         self.Move((pos[0], pos[1]))
 
 class MyApp(wx.App):
-
     def OnInit(self):
         self.timerlist = TimerList() # アラームタイマーのリスト
 
         # メインウィンドウ描画
-        self.drawInit()
+        self.draw_init()
 
         #タイマースタート
         self.timer = wx.Timer(self)
@@ -74,8 +73,8 @@ class MyApp(wx.App):
         return True
 
     # メインウィンドウ描画
-    def drawInit(self):
-        self.frame = wx.Frame(None, wx.ID_ANY, "Multiple Timer", size = (300, 200))
+    def draw_init(self):
+        self.frame = wx.Frame(None, wx.ID_ANY, "MultiPyAlarm", size = (300, 200))
         self.frame.CreateStatusBar()
         basepanel = wx.Panel(self.frame, wx.ID_ANY)
 
@@ -87,15 +86,15 @@ class MyApp(wx.App):
         top2panel = wx.Panel(toppanel, wx.ID_ANY)
         self.count_text = wx.TextCtrl(top2panel, wx.ID_ANY)
         button_add = wx.Button(top2panel, wx.ID_ANY, "add")
-        button_add.Bind(wx.EVT_BUTTON, self.addTimer)
+        button_add.Bind(wx.EVT_BUTTON, self.add_timer)
         button_del = wx.Button(top2panel, wx.ID_ANY, "del")
-        button_del.Bind(wx.EVT_BUTTON, self.delTimer)
+        button_del.Bind(wx.EVT_BUTTON, self.del_timer)
 
 
         bottompanel = wx.Panel(basepanel, wx.ID_ANY, style = wx.BORDER_SUNKEN)
         self.listbox = CheckListCtrl(bottompanel)
         self.listbox.InsertColumn(0, 'alarm', width=80)
-        self.listbox.InsertColumn(1, 'remain')
+        self.listbox.InsertColumn(1, 'left')
         self.listbox.InsertColumn(2, 'message')
         
         layout_bottom = wx.BoxSizer(wx.HORIZONTAL)
@@ -125,8 +124,8 @@ class MyApp(wx.App):
 
         # タイマーリストを画面のリストに追加
         for key, timer in self.timerlist.timerlist.items():
-            newindex = self.addListBox(self.listbox, timer)
-            self.timerlist.refreshIndex(key, newindex)
+            newindex = self.add_listbox(self.listbox, timer)
+            self.timerlist.refresh_index(key, newindex)
 
         self.frame.Show()
 
@@ -135,28 +134,28 @@ class MyApp(wx.App):
     # アラームタイマー追加
     # 追加するのはファイルのみ
     # 画面への反映は、onTimer で
-    def addTimer(self, event):
+    def add_timer(self, event):
         starttime = datetime.datetime.today()
-        remain = TimerList.getRemain(self.count_text.GetValue())
-        endtime = starttime + datetime.timedelta(seconds=remain)
+        left = TimerList.get_left(self.count_text.GetValue())
+        endtime = starttime + datetime.timedelta(seconds=left)
         message = self.message.GetValue()
         # index が空のものは画面未反映
         timer = {"index": "", "starttime": starttime, "endtime": endtime, "message": message} # index:0 は仮
         self.timerlist.add(timer)
 
-    def delTimer(self, event):
+    def del_timer(self, event):
         # todo ファイルの更新チェック
         num = self.listbox.GetItemCount()
         # range(num) だと削除した timer の分だけ範囲外になるので逆から
         for i in range(num-1, -1, -1):
             if self.listbox.IsChecked(i):
-                self.timerlist.deleteIndex(i)
+                self.timerlist.delete_index(i)
                 self.listbox.DeleteItem(i)
 
-    def addListBox(self, listbox, timer):
-        remain = timer["endtime"] - datetime.datetime.today()
+    def add_listbox(self, listbox, timer):
+        left = timer["endtime"] - datetime.datetime.today()
         index = listbox.InsertStringItem(sys.maxint, timer["endtime"].strftime("%H:%M:%S"))
-        listbox.SetStringItem(index, 1, MyApp.ListBoxTime(remain))
+        listbox.SetStringItem(index, 1, MyApp.get_listbox_left(left))
         listbox.SetStringItem(index, 2, timer["message"])
         return index
 
@@ -175,8 +174,8 @@ class MyApp(wx.App):
             for key, timer in self.timerlist.timerlist.items():
                 # 画面に追加されていないタイマーを追加
                 if timer["index"] == "":
-                    index = self.addListBox(self.listbox, timer)
-                    self.timerlist.refreshIndex(key, index)
+                    index = self.add_listbox(self.listbox, timer)
+                    self.timerlist.refresh_index(key, index)
                 # 時間になったタイマーをアラーム
                 if timer["endtime"] < datetime.datetime.today():
                     self.timerlist.delete(key, timer["index"])
@@ -184,12 +183,12 @@ class MyApp(wx.App):
                     MessageFrame(self.frame, "Alarm", timer["message"])
                 # 時間になっていないタイマーの画面更新
                 else:
-                    remain = timer["endtime"] - datetime.datetime.today()
-                    self.listbox.SetStringItem(timer["index"], 1, MyApp.ListBoxTime(remain))
+                    left = timer["endtime"] - datetime.datetime.today()
+                    self.listbox.SetStringItem(timer["index"], 1, MyApp.get_listbox_left(left))
 
-    # リストボックスの remain に表示する時間を生成
+    # リストボックスの left に表示する時間を生成
     @classmethod
-    def ListBoxTime(self, timedelta):
+    def get_listbox_left(self, timedelta):
         days = timedelta.days
         hours = timedelta.seconds / 60 / 60
         seconds = timedelta.seconds - hours * 60 * 60
@@ -229,10 +228,10 @@ class TimerFile(object):
                   allow_unicode=True)
         self.mtime = os.path.getmtime(self.timerfile)
 
-    def getTimerList(self):
+    def get_timerlist(self):
         return self.data
 
-    def isChanged(self):
+    def ischanged(self):
         if self.mtime < os.path.getmtime(self.timerfile):
             return True
         else:
@@ -241,11 +240,11 @@ class TimerFile(object):
 class TimerList(object):
     def __init__(self):
         self.timerfile = TimerFile()
-        self.timerlist = self.timerfile.getTimerList()
-        self.timernum = self.getTimerNum()
+        self.timerlist = self.timerfile.get_timerlist()
+        self.timernum = self.get_timernum()
         # 起動時に過ぎてしまっているアラームは削除
         # todo? 何を削除したか表示する
-        self.deleteOutside()
+        self.delete_outside()
 
     def add(self, timer):
         self.timernum = self.timernum + 1
@@ -262,7 +261,7 @@ class TimerList(object):
                 self.timerlist[key] = timer
         self.timerfile.save(self.timerlist)
 
-    def deleteIndex(self, index):
+    def delete_index(self, index):
         # 画面のリストのインデックスを更新
         # 更新しないとインデックスの場所がずれる
         for key, timer in self.timerlist.items():
@@ -273,17 +272,17 @@ class TimerList(object):
                 self.timerlist[key] = timer
         self.timerfile.save(self.timerlist)
 
-    def deleteOutside(self):
+    def delete_outside(self):
         for key, timer in self.timerlist.items():
             if timer["endtime"] < datetime.datetime.today():
                 del self.timerlist[key]
         self.timerfile.save(self.timerlist)
 
-    def refreshIndex(self, key, index):
+    def refresh_index(self, key, index):
         self.timerlist[key]["index"] = index
         self.timerfile.save(self.timerlist)
 
-    def getTimerNum(self):
+    def get_timernum(self):
         num = 0
         if self.timerlist:
             for key, value in self.timerlist.items():
@@ -292,7 +291,7 @@ class TimerList(object):
         return num
 
     @classmethod
-    def getRemain(self, counter):
+    def get_left(self, counter):
         if counter.isdigit():
             return int(counter) * 60
         else:
@@ -317,9 +316,9 @@ class TimerList(object):
             return total
 
     def update(self):
-        if self.timerfile.isChanged():
+        if self.timerfile.ischanged():
             self.timerfile.load()
-            self.timerlist = self.timerfile.getTimerList()
+            self.timerlist = self.timerfile.get_timerlist()
 
 # タイマーリストをイテレータとして使いたいけどできていない
 #    def next(self):
@@ -332,7 +331,7 @@ if __name__ == "__main__":
     # コマンドラインからタイマー追加
     argc = len(sys.argv)
     if argc > 1:
-        seconds = TimerList.getRemain(sys.argv[1])
+        seconds = TimerList.get_left(sys.argv[1])
         starttime = datetime.datetime.today()
         endtime = starttime + datetime.timedelta(seconds=seconds)
         if argc > 2:
@@ -344,7 +343,7 @@ if __name__ == "__main__":
         timerlist.add(timer)
 
     # 二重起動防止
-    mut = NamedMutex("multipletimer", True, 0)
+    mut = NamedMutex("MultiPyAlarm", True, 0)
     if not mut.acret:
         sys.exit()
 
