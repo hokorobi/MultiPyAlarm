@@ -34,30 +34,34 @@ class MessageFrame(wx.Frame):
         panel.SetSizer(layout)
         self.Show(True)
 
-        self.alarm_move_window(self)
+        # ウィンドウ表示時の位置
+        self.pos = self.GetPosition()
 
-    # ウィンドウを動かして目立たせる
-    def alarm_move_window(self, event):
+        # 0.1 秒ごとにウィンドウを移動させて目立たせる
+        self.movecount = 0
+        self.timer = wx.Timer(self)
+        self.timer.Start(100)
+        self.Bind(wx.EVT_TIMER, self.onTimer, self.timer)
+
+    # ウィンドウの移動（中心、左、上、下、右、中心）を 2 回
+    def onTimer(self, event):
+        if self.movecount > 10:
+            self.timer.Stop()
+        self.movecount = self.movecount + 1
         pos = self.GetPosition()
-        self.Move((pos[0] - 50, pos[1]))
-        time.sleep(0.1)
-        self.Move((pos[0], pos[1] - 50))
-        time.sleep(0.1)
-        self.Move((pos[0], pos[1] + 50))
-        time.sleep(0.1)
-        self.Move((pos[0] + 50, pos[1]))
-        time.sleep(0.1)
-        self.Move((pos[0], pos[1]))
-        time.sleep(0.1)
-        self.Move((pos[0] - 50, pos[1]))
-        time.sleep(0.1)
-        self.Move((pos[0], pos[1] - 50))
-        time.sleep(0.1)
-        self.Move((pos[0], pos[1] + 50))
-        time.sleep(0.1)
-        self.Move((pos[0] + 50, pos[1]))
-        time.sleep(0.1)
-        self.Move((pos[0], pos[1]))
+        if self.pos[0] == pos[0]:
+            if self.pos[1] == pos[1]:
+                self.Move((self.pos[0] - 50, self.pos[1]))
+            elif self.pos[1] + 50 == pos[1]:
+                self.Move((self.pos[0], self.pos[1] - 50))
+            elif self.pos[1] - 50 == pos[1]:
+                self.Move((self.pos[0] + 50, self.pos[1]))
+            else:
+                self.Move((self.pos[0], self.pos[1]))
+        elif self.pos[0] + 50 == pos[0]:
+            self.Move((self.pos[0], self.pos[1]))
+        elif self.pos[0] - 50 == pos[0]:
+            self.Move((self.pos[0], self.pos[1] - 50))
 
 class MyApp(wx.App):
     def OnInit(self):
