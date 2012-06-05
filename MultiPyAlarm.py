@@ -135,12 +135,7 @@ class MyApp(wx.App):
     # 追加するのはファイルのみ
     # 画面への反映は、onTimer で
     def add_timer(self, event):
-        starttime = datetime.datetime.today()
-        left = TimerList.get_left(self.count_text.GetValue())
-        endtime = starttime + datetime.timedelta(seconds=left)
-        message = self.message.GetValue()
-        # index が空のものは画面未反映
-        timer = {"index": "", "starttime": starttime, "endtime": endtime, "message": message} # index:0 は仮
+        timer = TimerList.get_timer(self.count_text.GetValue(), self.message.GetValue())
         self.timerlist.add(timer)
 
     def del_timer(self, event):
@@ -291,29 +286,30 @@ class TimerList(object):
         return num
 
     @classmethod
-    def get_left(self, counter):
-        if counter.isdigit():
-            return int(counter) * 60
-        else:
-            # todo 指定時刻 hh:mm, hh:mm:ss も扱えるように
-            # todo? d で日数も扱えるように
-            # todo? yyyy-mm-dd も扱えるように
-            # 単位が h で時間。それ以外の数字は分
-            p = re.compile(r'([h])')
-            items = p.split(counter)
-            #print items
-            num = 0
-            total = 0
-            for s in items:
-                if s.isdigit():
-                    num = int(s)
-                elif s == 'h':
-                    total = num * 60 * 60 + total
-                    num = 0
-            if num != 0:
-                total = num * 60 + total
-            #print total
-            return total
+    def get_timer(self, inputtime, message):
+        try:
+            starttime = datetime.datetime.now()
+            if inputtime.isdigit():
+                minute = int(inputtime)
+                endtime = starttime + datetime.timedelta(seconds=minute * 60)
+            elif inputtime.find('h') >= 0:
+                hourminute = [0 if x == '' else int(x) for x in inputtime.split('h', 1)]
+                endtime = starttime + datetime.timedelta(hours=hourminute[0], minutes=hourminute[1])
+            elif inputtime.find(':') >= 0:
+                hoursminutes = [0 if x == '' else int(x) for x in inputtime.split(':', 1)]
+                endtime = starttime.replace(hour=hoursminutes[0], minute=hoursminutes[1], second=0)
+                if starttime > endtime:
+                    raise 'invalid time'
+            else:
+                # todo? d で日数も扱えるように
+                # todo? yyyy-mm-dd も扱えるように
+                raise 'invalid time'
+            return {'index': '', 'starttime': starttime, 'endtime': endtime, 'message': message}
+        except:
+            ex = wx.App()
+            wx.MessageBox('invalid time', 'Error', wx.OK | wx.ICON_INFORMATION)
+            ex.Destroy()
+            return None
 
     def update(self):
         if self.timerfile.ischanged():
@@ -331,16 +327,14 @@ if __name__ == "__main__":
     # コマンドラインからタイマー追加
     argc = len(sys.argv)
     if argc > 1:
-        seconds = TimerList.get_left(sys.argv[1])
-        starttime = datetime.datetime.today()
-        endtime = starttime + datetime.timedelta(seconds=seconds)
         if argc > 2:
             message = sys.argv[2]
         else:
             message = ""
-        timerlist = TimerList()
-        timer = {"index": "", "starttime": starttime, "endtime": endtime, "message": message}
-        timerlist.add(timer)
+        timer = TimerList.get_timer(sys.argv[1], message)
+        if timer:
+            timerlist = TimerList()
+            timerlist.add(timer)
 
     # 二重起動防止
     mut = NamedMutex("MultiPyAlarm", True, 0)
