@@ -168,7 +168,7 @@ class MyApp(wx.App):
             #print self.timerlist
             for key, timer in self.timerlist.timerlist.items():
                 # 画面に追加されていないタイマーを追加
-                if timer["index"] == "":
+                if timer["index"] is None or timer["index"] == "":
                     index = self.add_listbox(self.listbox, timer)
                     self.timerlist.refresh_index(key, index)
                 # 時間になったタイマーをアラーム
@@ -269,7 +269,7 @@ class TimerList(object):
 
     def delete_outside(self):
         for key, timer in self.timerlist.items():
-            if timer["endtime"] < datetime.datetime.today():
+            if timer is None or timer["endtime"] < datetime.datetime.today():
                 del self.timerlist[key]
         self.timerfile.save(self.timerlist)
 
