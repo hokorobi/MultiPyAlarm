@@ -148,7 +148,7 @@ class MyApp(wx.App):
         # range(num) だと削除した timer の分だけ範囲外になるので逆から
         for i in range(num-1, -1, -1):
             if self.listbox.IsChecked(i):
-                self.timerlist.delete_index(i)
+                self.timerlist.delete(i)
                 self.listbox.DeleteItem(i)
 
     def add_listbox(self, listbox, timer):
@@ -177,7 +177,7 @@ class MyApp(wx.App):
                     self.timerlist.refresh_index(key, index)
                 # 時間になったタイマーをアラーム
                 if timer["endtime"] < datetime.datetime.today():
-                    self.timerlist.delete(key, timer["index"])
+                    self.timerlist.delete(timer["index"])
                     self.listbox.DeleteItem(timer["index"])
                     MessageFrame(self.frame, "Alarm", timer["message"])
                 # 時間になっていないタイマーの画面更新
@@ -250,22 +250,12 @@ class TimerList(object):
         self.timerlist[self.timernum] = timer
         self.timerfile.save(self.timerlist)
 
-    def delete(self, num, index):
-        del self.timerlist[num]
-        # 画面のリストのインデックスを更新
-        # 更新しないとインデックスの場所がずれる
-        for key, timer in self.timerlist.items():
-            if timer["index"] > index:
-                timer["index"] = timer["index"] - 1
-                self.timerlist[key] = timer
-        self.timerfile.save(self.timerlist)
-
-    def delete_index(self, index):
-        # 画面のリストのインデックスを更新
-        # 更新しないとインデックスの場所がずれる
+    def delete(self, index):
         for key, timer in self.timerlist.items():
             if timer["index"] == index:
                 del self.timerlist[key]
+            # 画面のリストのインデックスを更新
+            # 更新しないと画面の listbox とずれる
             if timer["index"] > index:
                 timer["index"] = timer["index"] - 1
                 self.timerlist[key] = timer
