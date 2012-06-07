@@ -101,9 +101,9 @@ class MyApp(wx.App):
 
         top2panel = wx.Panel(toppanel, wx.ID_ANY)
         self.count_text = wx.TextCtrl(top2panel, wx.ID_ANY)
-        button_add = wx.Button(top2panel, wx.ID_ANY, "add")
+        button_add = wx.Button(top2panel, wx.ID_ANY, "&add")
         button_add.Bind(wx.EVT_BUTTON, self.add_timer)
-        button_del = wx.Button(top2panel, wx.ID_ANY, "del")
+        button_del = wx.Button(top2panel, wx.ID_ANY, "&del")
         button_del.Bind(wx.EVT_BUTTON, self.del_timer)
 
 
