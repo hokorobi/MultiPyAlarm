@@ -305,7 +305,7 @@ class TimerList(object):
                 hoursminutes = [0 if x == '' else int(x) for x in inputtime.split(':', 1)]
                 endtime = starttime.replace(hour=hoursminutes[0], minute=hoursminutes[1], second=0)
                 if starttime > endtime:
-                    raise 'invalid time'
+                    endtime = endtime + datetime.timedelta(days=1)
             else:
                 # todo? d で日数も扱えるように
                 # todo? yyyy-mm-dd も扱えるように
