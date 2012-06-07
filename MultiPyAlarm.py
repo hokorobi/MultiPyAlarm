@@ -167,7 +167,10 @@ class MyApp(wx.App):
     # 画面への反映は、onTimer で
     def add_timer(self, event):
         timer = TimerList.get_timer(self.count_text.GetValue(), self.message.GetValue())
-        self.timerlist.add(timer)
+        if timer:
+            self.timerlist.add(timer)
+        else:
+            wx.MessageBox('invalid time', 'Error', wx.OK | wx.ICON_INFORMATION)
 
     def del_timer(self, event):
         # todo ファイルの更新チェック
@@ -327,9 +330,6 @@ class TimerList(object):
                 raise 'invalid time'
             return {'index': '', 'starttime': starttime, 'endtime': endtime, 'message': message}
         except:
-            ex = wx.App()
-            wx.MessageBox('invalid time', 'Error', wx.OK | wx.ICON_INFORMATION)
-            ex.Destroy()
             return None
 
     def update(self):
@@ -356,6 +356,10 @@ if __name__ == "__main__":
         if timer:
             timerlist = TimerList()
             timerlist.add(timer)
+        else:
+            ex = wx.App()
+            wx.MessageBox('invalid time', 'Error', wx.OK | wx.ICON_INFORMATION)
+            ex.Destroy()
 
     # 二重起動防止
     mut = NamedMutex("MultiPyAlarm", True, 0)
