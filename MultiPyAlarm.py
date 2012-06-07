@@ -25,6 +25,8 @@ class MessageFrame(wx.Frame):
         # アイコン設定
         exeName = win32api.GetModuleFileName(win32api.GetModuleHandle(None))
         self.SetIcon(wx.Icon(exeName, wx.BITMAP_TYPE_ICO))
+        # キーイベント
+        self.Bind(wx.EVT_KEY_DOWN, self.OnKeyDown)
 
         if not message:
             message = "IT'S TIME!"
@@ -46,6 +48,15 @@ class MessageFrame(wx.Frame):
         self.timer = wx.Timer(self)
         self.timer.Start(100)
         self.Bind(wx.EVT_TIMER, self.onTimer, self.timer)
+
+    def OnKeyDown(self, event):
+        key = event.GetKeyCode()
+        # ESC でウィンドウクローズ
+        if key == wx.WXK_ESCAPE:
+            self.Destroy()
+        else:
+            event.Skip()
+
 
     # ウィンドウの移動（中心、左、上、下、右、中心）を 2 回
     def onTimer(self, event):
@@ -162,6 +173,7 @@ class MyApp(wx.App):
                 index = self.listbox.GetNextSelected(index)
         else:
             event.Skip()
+
     # アラームタイマー追加
     # 追加するのはファイルのみ
     # 画面への反映は、onTimer で
