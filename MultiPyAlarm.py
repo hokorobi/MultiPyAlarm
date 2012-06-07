@@ -109,6 +109,7 @@ class MyApp(wx.App):
 
         bottompanel = wx.Panel(basepanel, wx.ID_ANY, style = wx.BORDER_SUNKEN)
         self.listbox = CheckListCtrl(bottompanel)
+        self.listbox.Bind(wx.EVT_KEY_DOWN, self.OnKeyDown)
         self.listbox.InsertColumn(0, 'alarm', width=80)
         self.listbox.InsertColumn(1, 'left')
         self.listbox.InsertColumn(2, 'message')
@@ -147,6 +148,20 @@ class MyApp(wx.App):
 
         self.SetTopWindow(self.frame)
 
+
+    def OnKeyDown(self, event):
+        key = event.GetKeyCode()
+        # listbox のスペースでチェックの切り替え（複数選択可）
+        if key == wx.WXK_SPACE:
+            index = self.listbox.GetFirstSelected()
+            while index != -1:
+                if self.listbox.IsChecked(index):
+                    self.listbox.CheckItem(index, check=False)
+                else:
+                    self.listbox.CheckItem(index, check=True)
+                index = self.listbox.GetNextSelected(index)
+        else:
+            event.Skip()
     # アラームタイマー追加
     # 追加するのはファイルのみ
     # 画面への反映は、onTimer で
