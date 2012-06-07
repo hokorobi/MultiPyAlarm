@@ -22,6 +22,9 @@ class MessageFrame(wx.Frame):
     def __init__(self, parent, title, message):
         style = wx.STAY_ON_TOP|wx.DEFAULT_FRAME_STYLE
         wx.Frame.__init__(self, parent, title=title, style=style)
+        # アイコン設定
+        exeName = win32api.GetModuleFileName(win32api.GetModuleHandle(None))
+        self.SetIcon(wx.Icon(exeName, wx.BITMAP_TYPE_ICO))
 
         if not message:
             message = "IT'S TIME!"
@@ -68,6 +71,11 @@ class MyApp(wx.App):
     def OnInit(self):
         self.timerlist = TimerList() # アラームタイマーのリスト
 
+        # アイコン取得
+        exeName = win32api.GetModuleFileName(win32api.GetModuleHandle(None))
+        self.icon = wx.Icon(exeName, wx.BITMAP_TYPE_ICO)
+        
+
         # メインウィンドウ描画
         self.draw_init()
 
@@ -80,9 +88,9 @@ class MyApp(wx.App):
     # メインウィンドウ描画
     def draw_init(self):
         self.frame = wx.Frame(None, wx.ID_ANY, "MultiPyAlarm", size = (300, 200))
-        exeName = win32api.GetModuleFileName(win32api.GetModuleHandle(None))
-        icon = wx.Icon(exeName, wx.BITMAP_TYPE_ICO)
-        self.frame.SetIcon(icon)
+
+        self.frame.SetIcon(self.icon)
+
         self.frame.CreateStatusBar()
         basepanel = wx.Panel(self.frame, wx.ID_ANY)
 
