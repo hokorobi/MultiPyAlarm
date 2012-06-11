@@ -78,32 +78,17 @@ class MessageFrame(wx.Frame):
         elif self.pos[0] - 50 == pos[0]:
             self.Move((self.pos[0], self.pos[1] - 50))
 
-class MyApp(wx.App):
-    def OnInit(self):
-        self.timerlist = TimerList() # アラームタイマーのリスト
+class ListFrame(wx.Frame):
+    def __init__(self, parent, timerlist):
+        wx.Frame.__init__(self, parent, title='MultiPyAlarm', size=(300, 200))
+        self.timerlist = timerlist
 
-        # アイコン取得
+        # アイコン設定
         exeName = win32api.GetModuleFileName(win32api.GetModuleHandle(None))
-        self.icon = wx.Icon(exeName, wx.BITMAP_TYPE_ICO)
-        
+        self.SetIcon(wx.Icon(exeName, wx.BITMAP_TYPE_ICO))
 
-        # メインウィンドウ描画
-        self.draw_init()
-
-        #タイマースタート
-        self.timer = wx.Timer(self)
-        self.timer.Start(1000)
-        self.Bind(wx.EVT_TIMER, self.onTimer, self.timer)
-        return True
-
-    # メインウィンドウ描画
-    def draw_init(self):
-        self.frame = wx.Frame(None, wx.ID_ANY, "MultiPyAlarm", size = (300, 200))
-
-        self.frame.SetIcon(self.icon)
-
-        self.frame.CreateStatusBar()
-        basepanel = wx.Panel(self.frame, wx.ID_ANY)
+        self.CreateStatusBar()
+        basepanel = wx.Panel(self, wx.ID_ANY)
 
         toppanel = wx.Panel(basepanel, wx.ID_ANY, style = wx.BORDER_SUNKEN)
 
@@ -155,11 +140,6 @@ class MyApp(wx.App):
             newindex = self.add_listbox(self.listbox, timer)
             self.timerlist.refresh_index(key, newindex)
 
-        self.frame.Show()
-
-        self.SetTopWindow(self.frame)
-
-
     def OnKeyDown(self, event):
         key = event.GetKeyCode()
         # listbox のスペースでチェックの切り替え（複数選択可）
@@ -196,36 +176,23 @@ class MyApp(wx.App):
     def add_listbox(self, listbox, timer):
         left = timer["endtime"] - datetime.datetime.today()
         index = listbox.InsertStringItem(sys.maxint, timer["endtime"].strftime("%H:%M:%S"))
-        listbox.SetStringItem(index, 1, MyApp.get_listbox_left(left))
+        listbox.SetStringItem(index, 1, self.get_listbox_left(left))
         listbox.SetStringItem(index, 2, timer["message"])
         return index
 
 
-    def onTimer(self, event):
-        # 一秒ごとに実行する処理
-        # タイマーリストの中から指定時間が経過したもののアラーム表示
-        # それ以外は画面の更新
+    def update(self):
+        # listbos の更新
 
-        # ファイルの更新があれば読み込み
-        self.timerlist.update()
-        # このあと timerlist ファイルが保存されるまでの間にファイルの更新があっても無視。
-        # ファイルのロックをした方がよいかも。現実的には大丈夫だろうけど。
         if self.timerlist:
-            #print self.timerlist
             for key, timer in self.timerlist.timerlist.items():
                 # 画面に追加されていないタイマーを追加
                 if timer["index"] is None or timer["index"] == "":
                     index = self.add_listbox(self.listbox, timer)
                     self.timerlist.refresh_index(key, index)
-                # 時間になったタイマーをアラーム
-                if timer["endtime"] < datetime.datetime.today():
-                    self.timerlist.delete(timer["index"])
-                    self.listbox.DeleteItem(timer["index"])
-                    MessageFrame(self.frame, "Alarm", timer["message"])
-                # 時間になっていないタイマーの画面更新
-                else:
-                    left = timer["endtime"] - datetime.datetime.today()
-                    self.listbox.SetStringItem(timer["index"], 1, MyApp.get_listbox_left(left))
+                # タイマーの画面更新
+                left = timer["endtime"] - datetime.datetime.today()
+                self.listbox.SetStringItem(timer["index"], 1, self.get_listbox_left(left))
 
     # リストボックスの left に表示する時間を生成
     @classmethod
@@ -245,6 +212,40 @@ class MyApp(wx.App):
             time = "{0}{1:>02d}:".format(time, minutes)
         time = "{0}{1:>02d}".format(time, seconds)
         return time
+
+class MyApp(wx.App):
+    def OnInit(self):
+        self.timerlist = TimerList() # アラームタイマーのリスト
+
+        # メインウィンドウ描画
+        self.listframe = ListFrame(None, self.timerlist)
+        self.listframe.Show()
+        self.SetTopWindow(self.listframe)
+
+        #タイマースタート
+        self.timer = wx.Timer(self)
+        self.timer.Start(1000)
+        self.Bind(wx.EVT_TIMER, self.onTimer, self.timer)
+        return True
+
+    def onTimer(self, event):
+        # 一秒ごとに実行する処理
+        # タイマーリストの中から指定時間が経過したもののアラーム表示
+        # ListFrame があれば、その画面の更新
+
+        # ファイルの更新があれば読み込み
+        self.timerlist.update()
+        # このあと timerlist ファイルが保存されるまでの間にファイルの更新があっても無視。
+        # ファイルのロックをした方がよいかも。現実的には大丈夫だろうけど。
+        if self.timerlist:
+            #print self.timerlist
+            for key, timer in self.timerlist.timerlist.items():
+                # 時間になったタイマーをアラーム
+                if timer["endtime"] < datetime.datetime.today():
+                    self.listframe.listbox.DeleteItem(timer["index"])
+                    self.timerlist.delete(timer["index"])
+                    MessageFrame(None, "Alarm", timer["message"])
+            self.listframe.update()
 
 # タイマーリストのファイル処理
 class TimerFile(object):
@@ -325,6 +326,7 @@ class TimerList(object):
     def get_timer(self, inputtime, message):
         try:
             starttime = datetime.datetime.now()
+            inputtime = inputtime.strip()
             if inputtime.isdigit():
                 minute = int(inputtime)
                 endtime = starttime + datetime.timedelta(seconds=minute * 60)
