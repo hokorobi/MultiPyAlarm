@@ -217,11 +217,7 @@ class ListFrame(wx.Frame):
 class MyApp(wx.App):
     def OnInit(self):
         # タスクトレイにアイコン表示
-        self.tb_ico=wx.TaskBarIcon()
-        exeName = win32api.GetModuleFileName(win32api.GetModuleHandle(None))
-        self.tb_ico.SetIcon(wx.Icon(exeName, wx.BITMAP_TYPE_ICO))
-        self.tb_ico.Bind(wx.EVT_TASKBAR_LEFT_DCLICK, self.OnTbiLeftDoubleClicked)
-        self.tb_ico.Bind(wx.EVT_TASKBAR_RIGHT_DCLICK, self.OnTbiRightDoubleClicked)
+        self.tb_ico = MyTaskBar(self)
 
         self.timerlist = TimerList() # アラームタイマーのリスト
 
@@ -238,15 +234,6 @@ class MyApp(wx.App):
         self.timer.Start(1000)
         self.Bind(wx.EVT_TIMER, self.onTimer, self.timer)
         return True
-
-    def OnTbiLeftDoubleClicked(self, evt):
-        if not self.listframe:
-            self.listframe = ListFrame(None, self.timerlist)
-            self.listframe.Show()
-
-    def OnTbiRightDoubleClicked(self, evt):
-        self.tb_ico.RemoveIcon()
-        sys.exit(0)
 
     def onTimer(self, event):
         # 一秒ごとに実行する処理
@@ -381,6 +368,32 @@ class TimerList(object):
 #
 #    def __iter__(self):
 #        return self
+
+class MyTaskBar(wx.TaskBarIcon):
+    def __init__(self, parent):
+        wx.TaskBarIcon.__init__(self)
+        self.parent = parent
+        exeName = win32api.GetModuleFileName(win32api.GetModuleHandle(None))
+        self.SetIcon(wx.Icon(exeName, wx.BITMAP_TYPE_ICO))
+        self.Bind(wx.EVT_TASKBAR_LEFT_DCLICK, self.OnTbiLeftDoubleClicked)
+
+    def CreatePopupMenu(self):
+        traymenu = wx.Menu()
+        id = wx.NewId()
+        item = wx.MenuItem(traymenu, id=id, text=u'&Quit')
+        self.Bind(wx.EVT_MENU, self.OnQuit, id=id)
+        traymenu.AppendItem(item)
+        return traymenu
+
+    def OnTbiLeftDoubleClicked(self, evt):
+        if not self.parent.listframe:
+            self.parent.listframe = ListFrame(None, self.parent.timerlist)
+            self.parent.listframe.Show()
+
+    def OnQuit(self, evt):
+        self.RemoveIcon()
+        sys.exit(0)
+
 
 if __name__ == "__main__":
     # コマンドラインからタイマー追加
