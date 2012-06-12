@@ -216,18 +216,37 @@ class ListFrame(wx.Frame):
 
 class MyApp(wx.App):
     def OnInit(self):
+        # タスクトレイにアイコン表示
+        self.tb_ico=wx.TaskBarIcon()
+        exeName = win32api.GetModuleFileName(win32api.GetModuleHandle(None))
+        self.tb_ico.SetIcon(wx.Icon(exeName, wx.BITMAP_TYPE_ICO))
+        self.tb_ico.Bind(wx.EVT_TASKBAR_LEFT_DCLICK, self.OnTbiLeftDoubleClicked)
+        self.tb_ico.Bind(wx.EVT_TASKBAR_RIGHT_DCLICK, self.OnTbiRightDoubleClicked)
+
         self.timerlist = TimerList() # アラームタイマーのリスト
+
+        # 不可視のトップウィンドウ
+        frame = wx.Frame(None)
+        self.SetTopWindow(frame)
 
         # メインウィンドウ描画
         self.listframe = ListFrame(None, self.timerlist)
         self.listframe.Show()
-        self.SetTopWindow(self.listframe)
 
         #タイマースタート
         self.timer = wx.Timer(self)
         self.timer.Start(1000)
         self.Bind(wx.EVT_TIMER, self.onTimer, self.timer)
         return True
+
+    def OnTbiLeftDoubleClicked(self, evt):
+        if not self.listframe:
+            self.listframe = ListFrame(None, self.timerlist)
+            self.listframe.Show()
+
+    def OnTbiRightDoubleClicked(self, evt):
+        self.tb_ico.RemoveIcon()
+        sys.exit(0)
 
     def onTimer(self, event):
         # 一秒ごとに実行する処理
@@ -243,10 +262,14 @@ class MyApp(wx.App):
             for key, timer in self.timerlist.timerlist.items():
                 # 時間になったタイマーをアラーム
                 if timer["endtime"] < datetime.datetime.today():
-                    self.listframe.del_item(timer["index"])
+                    # listframe が表示されていたら
+                    if self.listframe:
+                        self.listframe.del_item(timer["index"])
                     self.timerlist.delete(timer["index"])
                     MessageFrame(None, "Alarm", timer["message"])
-            self.listframe.update_items()
+            # listframe が表示されていたら
+            if self.listframe:
+                self.listframe.update_items()
 
 # タイマーリストのファイル処理
 class TimerFile(object):
