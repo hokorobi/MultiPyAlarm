@@ -136,7 +136,7 @@ class ListFrame(wx.Frame):
         bottompanel.SetSizer(layout_bottom)
 
         # タイマーリストを画面のリストに追加
-        for key, timer in self.timerlist.timerlist.items():
+        for key, timer in self.timerlist.items():
             newindex = self.add_item(self.listbox, timer)
             self.timerlist.refresh_index(key, newindex)
 
@@ -186,7 +186,7 @@ class ListFrame(wx.Frame):
     # listbox の更新
     def update_items(self):
         if self.timerlist:
-            for key, timer in self.timerlist.timerlist.items():
+            for key, timer in self.timerlist.items():
                 # 画面に追加されていないタイマーを追加
                 if timer["index"] is None or timer["index"] == "":
                     index = self.add_item(self.listbox, timer)
@@ -362,12 +362,8 @@ class TimerList(object):
             self.timerfile.load()
             self.timerlist = self.timerfile.get_timerlist()
 
-# タイマーリストをイテレータとして使いたいけどできていない
-#    def next(self):
-#        self.timerlist.next()
-#
-#    def __iter__(self):
-#        return self
+    def items(self):
+        return self.timerlist.items()
 
 class MyTaskBar(wx.TaskBarIcon):
     def __init__(self, parent):
