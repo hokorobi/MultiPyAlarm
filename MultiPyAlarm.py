@@ -19,12 +19,11 @@ class CheckListCtrl(wx.ListCtrl, CheckListCtrlMixin, ListCtrlAutoWidthMixin):
 
 # 時間が来たらメッセージ用のウィンドウを表示
 class MessageFrame(wx.Frame):
-    def __init__(self, parent, title, message):
+    def __init__(self, parent, title, message, icon):
         style = wx.STAY_ON_TOP|wx.DEFAULT_FRAME_STYLE
         wx.Frame.__init__(self, parent, title=title, style=style)
         # アイコン設定
-        exeName = win32api.GetModuleFileName(win32api.GetModuleHandle(None))
-        self.SetIcon(wx.Icon(exeName, wx.BITMAP_TYPE_ICO))
+        self.SetIcon(icon)
         # キーイベント
         self.Bind(wx.EVT_KEY_DOWN, self.OnKeyDown)
 
@@ -79,13 +78,11 @@ class MessageFrame(wx.Frame):
             self.Move((self.pos[0], self.pos[1] - 50))
 
 class ListFrame(wx.Frame):
-    def __init__(self, parent, timerlist):
+    def __init__(self, parent, timerlist, icon):
         wx.Frame.__init__(self, parent, title='MultiPyAlarm', size=(300, 200))
         self.timerlist = timerlist
 
-        # アイコン設定
-        exeName = win32api.GetModuleFileName(win32api.GetModuleHandle(None))
-        self.SetIcon(wx.Icon(exeName, wx.BITMAP_TYPE_ICO))
+        self.SetIcon(icon)
 
         self.CreateStatusBar()
         basepanel = wx.Panel(self, wx.ID_ANY)
@@ -216,8 +213,12 @@ class ListFrame(wx.Frame):
 
 class MyApp(wx.App):
     def OnInit(self):
+        # アイコン取得
+        exeName = win32api.GetModuleFileName(win32api.GetModuleHandle(None))
+        self.icon = wx.Icon(exeName, wx.BITMAP_TYPE_ICO)
+
         # タスクトレイにアイコン表示
-        self.tb_ico = MyTaskBar(self)
+        self.tb_ico = MyTaskBar(self, self.icon)
 
         self.timerlist = TimerList() # アラームタイマーのリスト
 
@@ -226,7 +227,7 @@ class MyApp(wx.App):
         self.SetTopWindow(frame)
 
         # メインウィンドウ描画
-        self.listframe = ListFrame(None, self.timerlist)
+        self.listframe = ListFrame(None, self.timerlist, self.icon)
         self.listframe.Show()
 
         #タイマースタート
@@ -253,7 +254,7 @@ class MyApp(wx.App):
                     if self.listframe:
                         self.listframe.del_item(timer["index"])
                     self.timerlist.delete(timer["index"])
-                    MessageFrame(None, "Alarm", timer["message"])
+                    MessageFrame(None, "Alarm", timer["message"], self.icon)
             # listframe が表示されていたら
             if self.listframe:
                 self.listframe.update_items()
@@ -366,11 +367,12 @@ class TimerList(object):
         return self.timerlist.items()
 
 class MyTaskBar(wx.TaskBarIcon):
-    def __init__(self, parent):
+    def __init__(self, parent, icon):
         wx.TaskBarIcon.__init__(self)
         self.parent = parent
-        exeName = win32api.GetModuleFileName(win32api.GetModuleHandle(None))
-        self.SetIcon(wx.Icon(exeName, wx.BITMAP_TYPE_ICO), 'MultiPyAlarm')
+        self.icon = icon
+
+        self.SetIcon(self.icon, 'MultiPyAlarm')
         self.Bind(wx.EVT_TASKBAR_LEFT_DCLICK, self.OnTbiLeftDoubleClicked)
 
     def CreatePopupMenu(self):
@@ -383,7 +385,7 @@ class MyTaskBar(wx.TaskBarIcon):
 
     def OnTbiLeftDoubleClicked(self, evt):
         if not self.parent.listframe:
-            self.parent.listframe = ListFrame(None, self.parent.timerlist)
+            self.parent.listframe = ListFrame(None, self.parent.timerlist, self.icon)
             self.parent.listframe.Show()
 
     def OnQuit(self, evt):
