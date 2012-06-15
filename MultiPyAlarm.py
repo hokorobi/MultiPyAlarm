@@ -370,7 +370,7 @@ class MyTaskBar(wx.TaskBarIcon):
         wx.TaskBarIcon.__init__(self)
         self.parent = parent
         exeName = win32api.GetModuleFileName(win32api.GetModuleHandle(None))
-        self.SetIcon(wx.Icon(exeName, wx.BITMAP_TYPE_ICO))
+        self.SetIcon(wx.Icon(exeName, wx.BITMAP_TYPE_ICO), 'MultiPyAlarm')
         self.Bind(wx.EVT_TASKBAR_LEFT_DCLICK, self.OnTbiLeftDoubleClicked)
 
     def CreatePopupMenu(self):
