@@ -411,6 +411,7 @@ class MyTaskBar(wx.TaskBarIcon):
         if os.name == 'nt':
             try:
                 self.SetBalloonTip(self.parent.icon.GetHandle(), title, msg)
+                self.SetIcon(self.icon, 'MultiPyAlarm')
             except Exception, e:
                 print e
 
