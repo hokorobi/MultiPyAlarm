@@ -9,6 +9,7 @@ from namedmutex import NamedMutex
 import yaml
 from wx.lib.mixins.listctrl import CheckListCtrlMixin, ListCtrlAutoWidthMixin
 import win32api
+import win32gui
 
 # アラームリストの画面表示
 class CheckListCtrl(wx.ListCtrl, CheckListCtrlMixin, ListCtrlAutoWidthMixin):
@@ -391,6 +392,50 @@ class MyTaskBar(wx.TaskBarIcon):
     def OnQuit(self, evt):
         self.RemoveIcon()
         sys.exit(0)
+
+    def ShowBalloonTip(self, title, msg):
+        """
+        Show Balloon tooltip
+         @param title The title of the balloon
+         @param msg   The tooltip message
+        """
+        if os.name == 'nt':
+            try:
+                self.SetBalloonTip(self.parent.icon.GetHandle(), title, msg)
+            except Exception, e:
+                print e
+
+    def SetBalloonTip(self, hicon, title, msg):
+        """
+        Don't call this method, call ShowBalloonTip instead
+        """
+        lpdata = (self.GetIconHandle(),
+                  99,
+                  win32gui.NIF_MESSAGE | win32gui.NIF_ICON | win32gui.NIF_INFO,
+                  0,
+                  hicon,
+                  '', msg, 0, title, win32gui.NIIF_INFO)
+        win32gui.Shell_NotifyIcon(win32gui.NIM_MODIFY, lpdata)
+
+    def GetIconHandle(self):
+        """
+        Find the icon window.
+        this is ugly but for now there is no way
+        to find this window directly from wx
+        """
+        if not hasattr(self, "_chwnd"):
+            try:
+                for handle in wx.GetTopLevelWindows():
+                    handle = handle.GetHandle()
+                    if len(win32gui.GetWindowText(handle)) == 0 and \
+                       win32gui.GetWindowRect(handle) == (0,0,400,250):
+                        self._chwnd = handle
+                        break
+                if not hasattr(self, "_chwnd"):
+                    raise Exception
+            except:
+                raise Exception, "Icon window not found"
+        return self._chwnd
 
 
 if __name__ == "__main__":
