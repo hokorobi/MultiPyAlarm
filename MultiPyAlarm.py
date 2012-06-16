@@ -190,6 +190,8 @@ class ListFrame(wx.Frame):
                 if timer["index"] is None or timer["index"] == "":
                     index = self.add_item(self.listbox, timer)
                     self.timerlist.refresh_index(key, index)
+                    if not timer["displayed"]:
+                        self.timerlist.displayed(key)
                 # タイマーの画面更新
                 left = timer["endtime"] - datetime.datetime.today()
                 self.listbox.SetStringItem(timer["index"], 1, self.get_listbox_left(left))
