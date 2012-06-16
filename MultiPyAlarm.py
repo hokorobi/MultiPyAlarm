@@ -158,6 +158,7 @@ class ListFrame(wx.Frame):
     def add_timer(self, event):
         timer = TimerList.get_timer(self.count_text.GetValue(), self.message.GetValue())
         if timer:
+            timer['displayed'] = True
             self.timerlist.add(timer)
         else:
             wx.MessageBox('invalid time', 'Error', wx.OK | wx.ICON_INFORMATION)
@@ -256,6 +257,10 @@ class MyApp(wx.App):
                         self.listframe.del_item(timer["index"])
                     self.timerlist.delete(timer["index"])
                     MessageFrame(None, "Alarm", timer["message"], self.icon)
+                if not self.listframe:
+                    if timer["displayed"] == False:
+                        self.tb_ico.ShowBalloonTip('', 'add: {0} {1}'.format(timer["endtime"], timer["message"]))
+                        self.timerlist.displayed(key)
             # listframe が表示されていたら
             if self.listframe:
                 self.listframe.update_items()
@@ -355,7 +360,7 @@ class TimerList(object):
                 # todo? d で日数も扱えるように
                 # todo? yyyy-mm-dd も扱えるように
                 raise 'invalid time'
-            return {'index': '', 'starttime': starttime, 'endtime': endtime, 'message': message}
+            return {'index': '', 'starttime': starttime, 'endtime': endtime, 'message': message, 'displayed': False}
         except:
             return None
 
@@ -366,6 +371,10 @@ class TimerList(object):
 
     def items(self):
         return self.timerlist.items()
+
+    def displayed(self, key):
+        self.timerlist[key]["displayed"] = True
+        self.timerfile.save(self.timerlist)
 
 class MyTaskBar(wx.TaskBarIcon):
     def __init__(self, parent, icon):
