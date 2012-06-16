@@ -137,6 +137,8 @@ class ListFrame(wx.Frame):
         for key, timer in self.timerlist.items():
             newindex = self.add_item(self.listbox, timer)
             self.timerlist.refresh_index(key, newindex)
+            if not timer["displayed"]:
+                self.timerlist.displayed(key)
 
     def OnKeyDown(self, event):
         key = event.GetKeyCode()
@@ -261,8 +263,9 @@ class MyApp(wx.App):
                     self.timerlist.delete(timer["index"])
                     MessageFrame(None, "Alarm", timer["message"], self.icon)
                 if not self.listframe:
-                    if timer["displayed"] == False:
-                        self.tb_ico.ShowBalloonTip('', 'add: {0} {1}'.format(timer["endtime"], timer["message"]))
+                    if not timer["displayed"]:
+                        balloonmessage = '{0} {1}'.format(timer["endtime"].strftime("%H:%M:%S"), timer["message"])
+                        self.tb_ico.ShowBalloonTip('add alarm', balloonmessage)
                         self.timerlist.displayed(key)
             # listframe が表示されていたら
             if self.listframe:
