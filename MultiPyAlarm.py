@@ -10,6 +10,18 @@ import yaml
 from wx.lib.mixins.listctrl import CheckListCtrlMixin, ListCtrlAutoWidthMixin
 import win32api
 import win32gui
+import imp
+
+# exe にした場合も実行ファイルのパスが取得できるように
+def main_is_frozen():
+    return (hasattr(sys, "frozen") # new py2exe
+            or hasattr(sys, "importers") # old py2exe
+            or imp.is_frozen("__main__")) # tools/freeze
+
+def get_main_dir():
+    if main_is_frozen():
+        return os.path.abspath(os.path.dirname(sys.executable))
+    return os.path.abspath(os.path.dirname(sys.argv[0]))
 
 # アラームリストの画面表示
 class CheckListCtrl(wx.ListCtrl, CheckListCtrlMixin, ListCtrlAutoWidthMixin):
@@ -274,7 +286,7 @@ class MyApp(wx.App):
 # タイマーリストのファイル処理
 class TimerFile(object):
     def __init__(self):
-        self.timerfile = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'timerlist')
+        self.timerfile = os.path.join(get_main_dir(), 'timerlist')
         self.load()
 
     def load(self):
