@@ -262,7 +262,7 @@ class MyApp(wx.App):
 # タイマーリストのファイル処理
 class TimerFile(object):
     def __init__(self):
-        self.timerfile = 'timerlist'
+        self.timerfile = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'timerlist')
         self.load()
 
     def load(self):
