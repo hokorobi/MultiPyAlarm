@@ -222,7 +222,8 @@ class MyApp(wx.App):
         # タスクトレイにアイコン表示
         self.tb_ico = MyTaskBar(self, self.icon)
 
-        self.timerlist = TimerList() # アラームタイマーのリスト
+        # アラームタイマーのリスト
+        self.timerlist = TimerList()
 
         # 不可視のトップウィンドウ
         frame = wx.Frame(None)
