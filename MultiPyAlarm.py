@@ -364,14 +364,45 @@ class TimerList(object):
             starttime = datetime.datetime.now()
             inputtime = inputtime.strip()
             if inputtime.isdigit():
-                minute = int(inputtime)
-                endtime = starttime + datetime.timedelta(seconds=minute * 60)
-            elif inputtime.find('h') >= 0:
-                hourminute = [0 if x == '' else int(x) for x in inputtime.split('h', 1)]
-                endtime = starttime + datetime.timedelta(hours=hourminute[0], minutes=hourminute[1])
-            elif inputtime.find(':') >= 0:
-                hoursminutes = [0 if x == '' else int(x) for x in inputtime.split(':', 1)]
-                endtime = starttime.replace(hour=hoursminutes[0], minute=hoursminutes[1], second=0)
+                # 数字だけ
+                m = int(inputtime)
+                endtime = starttime + datetime.timedelta(seconds=m * 60)
+            elif re.match('[0-9hms ]+$', inputtime):
+                # 1h, 1m, 1s など
+                def divlist(inputtime):
+                    # 数字と文字を分割してリストとして返す
+                    org = list(inputtime)
+                    new = []
+                    n = ''
+                    for x in org:
+                        if x.isdigit():
+                            n = ''.join((n, x))
+                        elif x == ' ':
+                            continue
+                        else:
+                            if n == '':
+                                new.append(x)
+                            else:
+                                new.append(n)
+                                new.append(x)
+                                n = ''
+                    return new
+
+                def get_timedelta_map(times):
+                    delta = {'h':0, 'm':0, 's':0}
+                    t = ''
+                    for x in times[::-1]:
+                        if x.isdigit():
+                            delta[t] = delta[t] + int(x)
+                        else:
+                            t = x
+                    return delta
+
+                hms = get_timedelta_map(divlist(inputtime))
+                endtime = starttime + datetime.timedelta(hours=hms['h'], minutes=hms['m'], seconds=hms['s'])
+            elif re.match('[0-9]+:[0-9]+$', inputtime):
+                hm = [0 if x == '' else int(x) for x in inputtime.split(':', 1)]
+                endtime = starttime.replace(hour=hm[0], minute=hm[1], second=0)
                 if starttime > endtime:
                     endtime = endtime + datetime.timedelta(days=1)
             else:
