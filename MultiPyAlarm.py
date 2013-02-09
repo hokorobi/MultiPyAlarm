@@ -233,6 +233,9 @@ class ListFrame(wx.Frame):
         return time
 
 class MyApp(wx.App):
+    #def __init__(self):
+    #    wx.App.__init__(self,False)
+
     def OnInit(self):
         # アイコン取得
         exeName = win32api.GetModuleFileName(win32api.GetModuleHandle(None))
