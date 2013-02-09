@@ -106,14 +106,14 @@ class ListFrame(wx.Frame):
         toppanel = wx.Panel(basepanel, wx.ID_ANY, style = wx.BORDER_SUNKEN)
 
         top1panel = wx.Panel(toppanel, wx.ID_ANY)
-        self.message = wx.TextCtrl(top1panel, wx.ID_ANY)
+        self.count_text = wx.TextCtrl(top1panel, wx.ID_ANY)
+        button_add = wx.Button(top1panel, wx.ID_ANY, "&add")
+        button_add.Bind(wx.EVT_BUTTON, self.add_timer)
+        button_del = wx.Button(top1panel, wx.ID_ANY, "&del")
+        button_del.Bind(wx.EVT_BUTTON, self.del_checkeditem)
 
         top2panel = wx.Panel(toppanel, wx.ID_ANY)
-        self.count_text = wx.TextCtrl(top2panel, wx.ID_ANY)
-        button_add = wx.Button(top2panel, wx.ID_ANY, "&add")
-        button_add.Bind(wx.EVT_BUTTON, self.add_timer)
-        button_del = wx.Button(top2panel, wx.ID_ANY, "&del")
-        button_del.Bind(wx.EVT_BUTTON, self.del_checkeditem)
+        self.message = wx.TextCtrl(top2panel, wx.ID_ANY)
 
 
         bottompanel = wx.Panel(basepanel, wx.ID_ANY, style = wx.BORDER_SUNKEN)
@@ -127,12 +127,12 @@ class ListFrame(wx.Frame):
         layout_bottom.Add(self.listbox, proportion=1, flag=wx.GROW|wx.ALL, border=3)
 
         layout_top1 = wx.BoxSizer(wx.HORIZONTAL)
-        layout_top1.Add(self.message, proportion=1, flag=wx.GROW)
+        layout_top1.Add(self.count_text)
+        layout_top1.Add(button_add)
+        layout_top1.Add(button_del)
 
         layout_top2 = wx.BoxSizer(wx.HORIZONTAL)
-        layout_top2.Add(self.count_text)
-        layout_top2.Add(button_add)
-        layout_top2.Add(button_del)
+        layout_top2.Add(self.message, proportion=1, flag=wx.GROW)
 
         layout_top = wx.BoxSizer(wx.VERTICAL)
         layout_top.Add(top1panel, flag=wx.GROW)
