@@ -50,6 +50,9 @@ class MessageFrame(wx.Frame):
         layout = wx.BoxSizer(wx.VERTICAL)
         layout.Add(text, flag = wx.GROW)
         panel.SetSizer(layout)
+        # 画面から文字がはみ出ないように折り返し
+        # 全角文字がつながっていると単語として扱われて折り返しできない
+        text.Wrap(self.GetSize().width)
         self.Show(True)
 
         # ウィンドウ表示時の位置
