@@ -505,7 +505,7 @@ if __name__ == "__main__":
     argc = len(sys.argv)
     if argc > 1:
         if argc > 2:
-            message = sys.argv[2]
+            message = " ".join(sys.argv[2:])
         else:
             message = ""
         timer = TimerList.get_timer(sys.argv[1], message)
