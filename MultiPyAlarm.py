@@ -328,7 +328,7 @@ class TimerList(object):
         self.timernum = self.get_timernum()
         # 起動時に過ぎてしまっているアラームは削除
         # todo? 何を削除したか表示する
-        self.delete_outside()
+        self.delete_timeout()
 
     def add(self, timer):
         self.timernum = self.timernum + 1
@@ -346,7 +346,7 @@ class TimerList(object):
                 self.timerlist[key] = timer
         self.timerfile.save(self.timerlist)
 
-    def delete_outside(self):
+    def delete_timeout(self):
         for key, timer in self.timerlist.items():
             if timer is None or timer["endtime"] < datetime.datetime.today():
                 del self.timerlist[key]
