@@ -449,7 +449,9 @@ class MyTaskBar(wx.TaskBarIcon):
         return traymenu
 
     def OnTbiLeftDoubleClicked(self, evt):
-        if not self.parent.listframe:
+        if self.parent.listframe:
+            self.parent.listframe.Raise()
+        else:
             self.parent.listframe = ListFrame(None, self.parent.timerlist, self.icon)
             self.parent.listframe.Show()
 
