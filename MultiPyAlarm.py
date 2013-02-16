@@ -12,8 +12,8 @@ from listframe import ListFrame
 from timerlist import TimerList
 
 class MyApp(wx.App):
-    def __init__(self):
-        wx.App.__init__(self,False)
+    #def __init__(self):
+    #    wx.App.__init__(self,False)
 
     def OnInit(self):
         # アイコン取得
