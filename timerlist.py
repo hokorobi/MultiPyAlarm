@@ -39,13 +39,24 @@ class TimerList(object):
         self.list[self.maxindex] = timer
         self.file.save(self.list)
 
-    def delete(self, index):
+    def delete_from_listbox(self, index):
+        # リストボックスのインデックスで削除するタイマーを指定
         for key, timer in self.list.items():
             if timer["index"] == index:
-                del self.list[key]
-            # 画面のリストのインデックスを更新
-            # 更新しないと画面の listbox とずれる
-            if timer["index"] > index:
+                delete_timerlist_index = key
+                break
+        self.delete(delete_timerlist_index)
+
+    def delete(self, index):
+        delete_listbox_index = self.list[index]["index"]
+        del self.list[index]
+
+        # 画面のリストのインデックスを更新
+        # 更新しないと画面の listbox とずれる
+        for key, timer in self.list.items():
+            if not isinstance(timer["index"], int):
+                continue
+            if timer["index"] > delete_listbox_index:
                 timer["index"] = timer["index"] - 1
                 self.list[key] = timer
         self.file.save(self.list)

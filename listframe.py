@@ -104,7 +104,7 @@ class ListFrame(wx.Frame):
         # range(num) だと削除した timer の分だけ範囲外になるので逆から
         for i in range(num-1, -1, -1):
             if self.listbox.IsChecked(i):
-                self.timerlist.delete(i)
+                self.timerlist.delete_from_listbox(i)
                 self.listbox.DeleteItem(i)
 
     def add_item(self, listbox, timer):

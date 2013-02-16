@@ -57,7 +57,7 @@ class MyApp(wx.App):
                     # listframe が表示されていたら
                     if self.listframe:
                         self.listframe.del_item(timer["index"])
-                    self.timerlist.delete(timer["index"])
+                    self.timerlist.delete(key)
                     MessageFrame(None, "Alarm", timer["message"], self.icon)
                 if not self.listframe:
                     if not timer["displayed"]:
