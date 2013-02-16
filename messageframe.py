@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 import wx
 
+
 class MessageFrame(wx.Frame):
-    # アラーム用のメッセージを表示するウィンドウ
+    """アラーム用のメッセージを表示するウィンドウ"""
 
     def __init__(self, parent, title, message, icon):
-        style = wx.STAY_ON_TOP|wx.DEFAULT_FRAME_STYLE
+        style = wx.STAY_ON_TOP | wx.DEFAULT_FRAME_STYLE
         wx.Frame.__init__(self, parent, title=title, style=style)
         # アイコン設定
         self.SetIcon(icon)
@@ -15,12 +16,13 @@ class MessageFrame(wx.Frame):
         if not message:
             message = "IT'S TIME!"
         panel = wx.Panel(self, wx.ID_ANY)
-        font = wx.Font(32, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL)
-        text = wx.StaticText(panel, wx.ID_ANY, message, style = wx.TE_CENTER)
+        font = wx.Font(32, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL,
+                       wx.FONTWEIGHT_NORMAL)
+        text = wx.StaticText(panel, wx.ID_ANY, message, style=wx.TE_CENTER)
         text.SetFont(font)
         text.CenterOnParent()
         layout = wx.BoxSizer(wx.VERTICAL)
-        layout.Add(text, flag = wx.GROW)
+        layout.Add(text, flag=wx.GROW)
         panel.SetSizer(layout)
         # 画面から文字がはみ出ないように折り返し
         # 全角文字がつながっていると単語として扱われて折り返しできない
@@ -44,9 +46,8 @@ class MessageFrame(wx.Frame):
         else:
             event.Skip()
 
-
-    # ウィンドウの移動（中心、左、上、下、右、中心）を 2 回
     def onTimer(self, event):
+        """ウィンドウの移動（中心、左、上、下、右、中心）を 2 回"""
         if self.movecount > 10:
             self.timer.Stop()
         self.movecount = self.movecount + 1

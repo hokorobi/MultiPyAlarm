@@ -5,14 +5,17 @@ import sys
 from wx.lib.mixins.listctrl import CheckListCtrlMixin, ListCtrlAutoWidthMixin
 from timerlist import TimerList
 
+
 class CheckListCtrl(wx.ListCtrl, CheckListCtrlMixin, ListCtrlAutoWidthMixin):
     def __init__(self, parent):
-        wx.ListCtrl.__init__(self, parent, -1, style=wx.LC_REPORT | wx.SUNKEN_BORDER)
+        wx.ListCtrl.__init__(self, parent, -1,
+                             style=wx.LC_REPORT | wx.SUNKEN_BORDER)
         CheckListCtrlMixin.__init__(self)
         ListCtrlAutoWidthMixin.__init__(self)
 
+
 class ListFrame(wx.Frame):
-    # タイマーリストウィンドウ
+    """タイマーリストウィンドウ"""
 
     def __init__(self, parent, timerlist, icon):
         wx.Frame.__init__(self, parent, title='MultiPyAlarm', size=(300, 200))
@@ -23,7 +26,7 @@ class ListFrame(wx.Frame):
         self.CreateStatusBar()
         basepanel = wx.Panel(self, wx.ID_ANY)
 
-        toppanel = wx.Panel(basepanel, wx.ID_ANY, style = wx.BORDER_SUNKEN)
+        toppanel = wx.Panel(basepanel, wx.ID_ANY, style=wx.BORDER_SUNKEN)
 
         top1panel = wx.Panel(toppanel, wx.ID_ANY)
         self.count_text = wx.TextCtrl(top1panel, wx.ID_ANY)
@@ -35,8 +38,7 @@ class ListFrame(wx.Frame):
         top2panel = wx.Panel(toppanel, wx.ID_ANY)
         self.message = wx.TextCtrl(top2panel, wx.ID_ANY)
 
-
-        bottompanel = wx.Panel(basepanel, wx.ID_ANY, style = wx.BORDER_SUNKEN)
+        bottompanel = wx.Panel(basepanel, wx.ID_ANY, style=wx.BORDER_SUNKEN)
         self.listbox = CheckListCtrl(bottompanel)
         self.listbox.Bind(wx.EVT_KEY_DOWN, self.OnKeyDown)
         self.listbox.InsertColumn(0, 'alarm', width=80)
@@ -44,7 +46,8 @@ class ListFrame(wx.Frame):
         self.listbox.InsertColumn(2, 'message')
 
         layout_bottom = wx.BoxSizer(wx.HORIZONTAL)
-        layout_bottom.Add(self.listbox, proportion=1, flag=wx.GROW|wx.ALL, border=3)
+        layout_bottom.Add(self.listbox, proportion=1, flag=wx.GROW | wx.ALL,
+                          border=3)
 
         layout_top1 = wx.BoxSizer(wx.HORIZONTAL)
         layout_top1.Add(self.count_text)
@@ -89,17 +92,20 @@ class ListFrame(wx.Frame):
         else:
             event.Skip()
 
-    # アラームタイマー追加
-    # 追加するのはファイルのみ
-    # 画面への反映は、onTimer で
     def add_timer(self, event):
+        """
+        アラームタイマー追加
+        追加するのはファイルのみ
+        画面への反映は、onTimer で
+        """
         try:
-            self.timerlist.add(self.count_text.GetValue(), self.message.GetValue(), True)
+            self.timerlist.add(self.count_text.GetValue(),
+                               self.message.GetValue(), True)
         except:
             wx.MessageBox('invalid time', 'Error', wx.OK | wx.ICON_INFORMATION)
 
     def del_checkeditem(self, event):
-        # todo ファイルの更新チェック
+        """todo ファイルの更新チェック"""
         num = self.listbox.GetItemCount()
         # range(num) だと削除した timer の分だけ範囲外になるので逆から
         for i in range(num-1, -1, -1):
@@ -109,7 +115,8 @@ class ListFrame(wx.Frame):
 
     def add_item(self, listbox, timer):
         left = timer["endtime"] - datetime.datetime.today()
-        index = self.listbox.InsertStringItem(sys.maxint, timer["endtime"].strftime("%H:%M:%S"))
+        index = self.listbox.InsertStringItem(
+            sys.maxint, timer["endtime"].strftime("%H:%M:%S"))
         self.listbox.SetStringItem(index, 1, self.get_listbox_left(left))
         self.listbox.SetStringItem(index, 2, timer["message"])
         return index
@@ -117,8 +124,8 @@ class ListFrame(wx.Frame):
     def del_item(self, index):
         self.listbox.DeleteItem(index)
 
-    # listbox の更新
     def update_items(self):
+        """listbox の更新"""
         if self.timerlist:
             for key, timer in self.timerlist.items():
                 # 画面に追加されていないタイマーを追加
@@ -129,11 +136,12 @@ class ListFrame(wx.Frame):
                         self.timerlist.displayed(key)
                 # タイマーの画面更新
                 left = timer["endtime"] - datetime.datetime.today()
-                self.listbox.SetStringItem(timer["index"], 1, self.get_listbox_left(left))
+                self.listbox.SetStringItem(timer["index"], 1,
+                                           self.get_listbox_left(left))
 
-    # リストボックスの left に表示する時間を生成
     @classmethod
     def get_listbox_left(self, timedelta):
+        """リストボックスの left に表示する時間を生成"""
         days = timedelta.days
         hours = timedelta.seconds / 60 / 60
         seconds = timedelta.seconds - hours * 60 * 60

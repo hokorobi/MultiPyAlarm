@@ -3,6 +3,7 @@ import datetime
 import re
 from timerfile import TimerFile
 
+
 class TimerList(object):
     """
     タイマーのリスト
@@ -81,7 +82,7 @@ class TimerList(object):
         return num
 
     def divlist(self, inputtime):
-        # 数字と文字を分割してリストとして返す
+        """数字と文字を分割してリストとして返す"""
         org = list(inputtime)
         new = []
         n = ''
@@ -100,8 +101,8 @@ class TimerList(object):
         return new
 
     def get_timedelta_map(self, times):
-        # 時、分、秒のそれぞれの値を合計する
-        delta = {'h':0, 'm':0, 's':0}
+        """時、分、秒のそれぞれの値を合計する"""
+        delta = {'h': 0, 'm': 0, 's': 0}
         t = ''
         for x in times[::-1]:
             if x.isdigit():
@@ -122,7 +123,8 @@ class TimerList(object):
                 # 1h, 1m, 1s など
 
                 hms = self.get_timedelta_map(self.divlist(inputtime))
-                endtime = starttime + datetime.timedelta(hours=hms['h'], minutes=hms['m'], seconds=hms['s'])
+                endtime = starttime + datetime.timedelta(
+                    hours=hms['h'], minutes=hms['m'], seconds=hms['s'])
             elif re.match('[0-9]+:[0-9]+$', inputtime):
                 hm = [0 if x == '' else int(x) for x in inputtime.split(':', 1)]
                 endtime = starttime.replace(hour=hm[0], minute=hm[1], second=0)
@@ -132,7 +134,8 @@ class TimerList(object):
                 # todo? d で日数も扱えるように
                 # todo? yyyy-mm-dd も扱えるように
                 raise 'invalid time'
-            return {'index': '', 'starttime': starttime, 'endtime': endtime, 'message': message, 'displayed': noneBaloon}
+            return {'index': '', 'starttime': starttime, 'endtime': endtime,
+                    'message': message, 'displayed': noneBaloon}
         except:
             return None
 

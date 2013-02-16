@@ -11,6 +11,7 @@ from messageframe import MessageFrame
 from listframe import ListFrame
 from timerlist import TimerList
 
+
 class MyApp(wx.App):
     #def __init__(self):
     #    wx.App.__init__(self,False)
@@ -41,9 +42,11 @@ class MyApp(wx.App):
         return True
 
     def onTimer(self, event):
-        # 一秒ごとに実行する処理
-        # タイマーリストの中から指定時間が経過したもののアラーム表示
-        # ListFrame があれば、その画面の更新
+        """
+        一秒ごとに実行する処理
+        タイマーリストの中から指定時間が経過したもののアラーム表示
+        ListFrame があれば、その画面の更新
+        """
 
         # ファイルの更新があれば読み込み
         self.timerlist.update()
@@ -61,12 +64,15 @@ class MyApp(wx.App):
                     MessageFrame(None, "Alarm", timer["message"], self.icon)
                 if not self.listframe:
                     if not timer["displayed"]:
-                        balloonmessage = '{0} {1}'.format(timer["endtime"].strftime("%H:%M:%S"), timer["message"])
+                        endtime = timer["endtime"].strftime("%H:%M:%S")
+                        message = timer["message"]
+                        balloonmessage = '{0} {1}'.format(endtime, message)
                         self.tb_ico.ShowBalloonTip('add alarm', balloonmessage)
                         self.timerlist.displayed(key)
             # listframe が表示されていたら
             if self.listframe:
                 self.listframe.update_items()
+
 
 class MyTaskBar(wx.TaskBarIcon):
     def __init__(self, parent, icon):
@@ -89,7 +95,8 @@ class MyTaskBar(wx.TaskBarIcon):
         if self.parent.listframe:
             self.parent.listframe.Raise()
         else:
-            self.parent.listframe = ListFrame(None, self.parent.timerlist, self.icon)
+            self.parent.listframe = ListFrame(None, self.parent.timerlist,
+                                              self.icon)
             self.parent.listframe.Show()
 
     def OnQuit(self, evt):
@@ -132,7 +139,7 @@ class MyTaskBar(wx.TaskBarIcon):
                 for handle in wx.GetTopLevelWindows():
                     handle = handle.GetHandle()
                     if len(win32gui.GetWindowText(handle)) == 0 and \
-                       win32gui.GetWindowRect(handle) == (0,0,400,250):
+                       win32gui.GetWindowRect(handle) == (0, 0, 400, 250):
                         self._chwnd = handle
                         break
                 if not hasattr(self, "_chwnd"):

@@ -4,18 +4,19 @@ import yaml
 import sys
 import imp
 
+
 class TimerFile(object):
-    # タイマーリストのファイル処理
+    """タイマーリストのファイル処理"""
 
     def __init__(self):
         self.timerfile = os.path.join(self.get_main_dir(), 'timerlist')
         self.load()
 
-    # exe にした場合も実行ファイルのパスが取得できるように
     def main_is_frozen(self):
-        return (hasattr(sys, "frozen") # new py2exe
-                or hasattr(sys, "importers") # old py2exe
-                or imp.is_frozen("__main__")) # tools/freeze
+        """exe にした場合も実行ファイルのパスが取得できるように"""
+        return (hasattr(sys, "frozen")  # new py2exe
+                or hasattr(sys, "importers")  # old py2exe
+                or imp.is_frozen("__main__"))  # tools/freeze
 
     def get_main_dir(self):
         if self.main_is_frozen():
@@ -30,7 +31,7 @@ class TimerFile(object):
             self.mtime = os.path.getmtime(self.timerfile)
         except IOError, (errno, strerror):
             self.data = dict()
-            if errno != 2: # not exists
+            if errno != 2:  # not exists
                 raise
 
     def save(self, data):
