@@ -4,6 +4,25 @@ import re
 from timerfile import TimerFile
 
 class TimerList(object):
+    """
+    タイマーのリスト
+
+    timer = {
+    'index': int or str,
+        # リストフレームで表示しているリストのインデックス。
+        # 未表示の場合は空文字列
+    'starttime': datetime,
+        # タイマーを開始した時間
+    'endtime': datetime,
+        # アラームの時間
+    'message': str,
+        # アラームで表示するメッセージ
+    'displayed': True or False
+        # 画面表示したか否か。
+        # リストフレームが表示されていない状態でコマンドラインからタイマーが追
+        # 加された場合にバルーンを表示をするので、その判断に使う。
+    }
+    """
     def __init__(self):
         self.file = TimerFile()
         self.list = self.file.get_list()
