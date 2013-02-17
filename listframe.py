@@ -93,10 +93,9 @@ class ListFrame(wx.Frame):
             event.Skip()
 
     def add_timer(self, event):
-        """
-        アラームタイマー追加
-        追加するのはファイルのみ
-        画面への反映は、onTimer で
+        """アラームタイマー追加
+
+        ファイルに対してタイマーを追加し、onTimer で画面へ反映する。
         """
         try:
             self.timerlist.add(self.count_text.GetValue(),

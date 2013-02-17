@@ -42,8 +42,8 @@ class MyApp(wx.App):
         return True
 
     def onTimer(self, event):
-        """
-        一秒ごとに実行する処理
+        """一秒ごとに実行する処理
+
         タイマーリストの中から指定時間が経過したもののアラーム表示
         ListFrame があれば、その画面の更新
         """
@@ -104,8 +104,8 @@ class MyTaskBar(wx.TaskBarIcon):
         sys.exit(0)
 
     def ShowBalloonTip(self, title, msg):
-        """
-        Show Balloon tooltip
+        """Show Balloon tooltip
+
          @param title The title of the balloon
          @param msg   The tooltip message
         """
@@ -117,9 +117,7 @@ class MyTaskBar(wx.TaskBarIcon):
                 print e
 
     def SetBalloonTip(self, hicon, title, msg):
-        """
-        Don't call this method, call ShowBalloonTip instead
-        """
+        """Don't call this method, call ShowBalloonTip instead"""
         lpdata = (self.GetIconHandle(),
                   99,
                   win32gui.NIF_MESSAGE | win32gui.NIF_ICON | win32gui.NIF_INFO,
@@ -129,10 +127,10 @@ class MyTaskBar(wx.TaskBarIcon):
         win32gui.Shell_NotifyIcon(win32gui.NIM_MODIFY, lpdata)
 
     def GetIconHandle(self):
-        """
-        Find the icon window.
-        this is ugly but for now there is no way
-        to find this window directly from wx
+        """Find the icon window.
+
+        this is ugly but for now there is no way to find this window directly
+        from wx
         """
         if not hasattr(self, "_chwnd"):
             try:

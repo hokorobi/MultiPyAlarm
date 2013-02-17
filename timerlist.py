@@ -5,8 +5,7 @@ from timerfile import TimerFile
 
 
 class TimerList(object):
-    """
-    タイマーのリスト
+    """タイマーのリスト
 
     timer = {
     'index': int or str,

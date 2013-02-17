@@ -26,9 +26,8 @@ class NamedMutex(object):
     """A named, system-wide mutex that can be acquired and released."""
 
     def __init__(self, name, acquired=False, timeout=None):
-        """
-        Create named mutex with given name, also acquiring mutex if acquired is
-        True.
+        """Create named mutex with given name, also acquiring mutex if acquired
+        is True.
         Mutex names are case sensitive, and a filename (with backslashes in it)
         is not a valid mutex name. Raises WindowsError on error.
         """
@@ -42,9 +41,9 @@ class NamedMutex(object):
             self.acret = self.acquire(timeout)
 
     def acquire(self, timeout=None):
-        """
-        Acquire ownership of the mutex, returning True if acquired. If a
-        timeout is specified, it will wait a maximum of timeout seconds to
+        """Acquire ownership of the mutex, returning True if acquired.
+
+        If a timeout is specified, it will wait a maximum of timeout seconds to
         acquire the mutex, returning True if acquired, False on timeout.
         Raises WindowsError on error.
         """
