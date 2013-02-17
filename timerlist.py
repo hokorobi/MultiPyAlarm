@@ -108,32 +108,30 @@ class TimerList(object):
         return delta
 
     def get_timer(self, inputtime, message, noneBaloon=False):
-        try:
-            starttime = datetime.datetime.now()
-            inputtime = inputtime.strip()
-            if inputtime.isdigit():
-                # 数字だけ
-                m = int(inputtime)
-                endtime = starttime + datetime.timedelta(seconds=m * 60)
-            elif re.match('[0-9hms ]+$', inputtime):
-                # 1h, 1m, 1s など
 
-                hms = self.get_timedelta_map(self.divlist(inputtime))
-                endtime = starttime + datetime.timedelta(
-                    hours=hms['h'], minutes=hms['m'], seconds=hms['s'])
-            elif re.match('[0-9]+:[0-9]+$', inputtime):
-                hm = [0 if x == '' else int(x) for x in inputtime.split(':', 1)]
-                endtime = starttime.replace(hour=hm[0], minute=hm[1], second=0)
-                if starttime > endtime:
-                    endtime = endtime + datetime.timedelta(days=1)
-            else:
-                # todo? d で日数も扱えるように
-                # todo? yyyy-mm-dd も扱えるように
-                raise Exception('invalid time')
-            return {'index': '', 'starttime': starttime, 'endtime': endtime,
-                    'message': message, 'displayed': noneBaloon}
-        except:
+        starttime = datetime.datetime.now()
+        inputtime = inputtime.strip()
+        if inputtime.isdigit():
+            # 数字だけ
+            m = int(inputtime)
+            endtime = starttime + datetime.timedelta(seconds=m * 60)
+        elif re.match('[0-9hms ]+$', inputtime):
+            # 1h, 1m, 1s など
+
+            hms = self.get_timedelta_map(self.divlist(inputtime))
+            endtime = starttime + datetime.timedelta(
+                hours=hms['h'], minutes=hms['m'], seconds=hms['s'])
+        elif re.match('[0-9]+:[0-9]+$', inputtime):
+            hm = [0 if x == '' else int(x) for x in inputtime.split(':', 1)]
+            endtime = starttime.replace(hour=hm[0], minute=hm[1], second=0)
+            if starttime > endtime:
+                endtime = endtime + datetime.timedelta(days=1)
+        else:
+            # todo? d で日数も扱えるように
+            # todo? yyyy-mm-dd も扱えるように
             return None
+        return {'index': '', 'starttime': starttime, 'endtime': endtime,
+                'message': message, 'displayed': noneBaloon}
 
     def update(self):
         if self.file.ischanged():
