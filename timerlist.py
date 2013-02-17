@@ -132,7 +132,7 @@ class TimerList(object):
             else:
                 # todo? d で日数も扱えるように
                 # todo? yyyy-mm-dd も扱えるように
-                raise 'invalid time'
+                raise Exception('invalid time')
             return {'index': '', 'starttime': starttime, 'endtime': endtime,
                     'message': message, 'displayed': noneBaloon}
         except:
