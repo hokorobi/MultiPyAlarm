@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import os
-import yaml
+import pickle
 import sys
 import imp
 
@@ -25,19 +25,21 @@ class TimerFile(object):
 
     def load(self):
         try:
-            f = open(self.timerfile, 'r')
-            self.data = yaml.load(f)
-            f.close()
+            with open(self.timerfile, 'rb') as f:
+                self.data = pickle.load(f)
             self.mtime = os.path.getmtime(self.timerfile)
+        except (EOFError, KeyError):
+            # EOFError ファイルがない場合
+            # KeyError YAML のデータが残っていた場合
+            self.data = dict()
         except IOError, (errno, strerror):
             self.data = dict()
             if errno != 2:  # not exists
                 raise
 
     def save(self, data):
-        yaml.dump(data, file(self.timerfile, 'wb'),
-                  default_flow_style=False, encoding='utf8',
-                  allow_unicode=True)
+        with open(self.timerfile, 'wb') as f:
+            pickle.dump(data, f)
         self.mtime = os.path.getmtime(self.timerfile)
 
     def get_list(self):
