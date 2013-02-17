@@ -41,11 +41,8 @@ class TimerList(object):
 
     def delete_from_listbox(self, index):
         # リストボックスのインデックスで削除するタイマーを指定
-        for key, timer in self.list.items():
-            if timer["index"] == index:
-                delete_timerlist_index = key
-                break
-        self.delete(delete_timerlist_index)
+        listindex = [k for k, t in self.list.items() if t["index"] == index]
+        self.delete(listindex[0])  # 一つだけのはずなので
 
     def delete(self, index):
         delete_listbox_index = self.list[index]["index"]
