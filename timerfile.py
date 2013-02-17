@@ -46,7 +46,11 @@ class TimerFile(object):
         return self.data
 
     def ischanged(self):
-        if self.mtime < os.path.getmtime(self.timerfile):
-            return True
-        else:
+        try:
+            if self.mtime < os.path.getmtime(self.timerfile):
+                return True
+            else:
+                return False
+        except:
+            # ファイルが削除されてしまっても、とりあえずエラーとならないように
             return False
