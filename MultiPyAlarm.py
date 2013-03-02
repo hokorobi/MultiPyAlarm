@@ -158,7 +158,7 @@ class MyTaskBar(wx.TaskBarIcon):
                 if not hasattr(self, "_chwnd"):
                     raise Exception
             except:
-                raise Exception, "Icon window not found"
+                raise Exception("Icon window not found")
         return self._chwnd
 
 
