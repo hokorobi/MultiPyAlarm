@@ -41,6 +41,20 @@ class MyApp(wx.App):
         self.Bind(wx.EVT_TIMER, self.onTimer, self.timer)
         return True
 
+    def show_balloon(self, key, timer):
+        endtime = timer["endtime"].strftime("%H:%M:%S")
+        message = timer["message"]
+        balloonmessage = '{0} {1}'.format(endtime, message)
+        self.tb_ico.ShowBalloonTip('add alarm', balloonmessage)
+        self.timerlist.displayed(key)
+
+    def alarm(self, key, timer):
+        # listframe が表示されていたら、タイマー一覧から削除
+        if self.listframe:
+            self.listframe.del_item(timer["index"])
+        self.timerlist.delete(key)
+        MessageFrame(None, "Alarm", timer["message"], self.icon)
+
     def onTimer(self, event):
         """一秒ごとに実行する処理
 
@@ -50,28 +64,29 @@ class MyApp(wx.App):
 
         # ファイルの更新があれば読み込み
         self.timerlist.update()
-        # このあと timerlist ファイルが保存されるまでの間にファイルの更新があっても無視。
+
+        # このあと timerlist ファイルが保存されるまでの間にファイルの更新があっ
+        # ても無視。
         # ファイルのロックをした方がよいかも。現実的には大丈夫だろうけど。
-        if self.timerlist:
-            #print self.timerlist
-            for key, timer in self.timerlist.items():
-                # 時間になったタイマーをアラーム
-                if timer["endtime"] < datetime.datetime.today():
-                    # listframe が表示されていたら
-                    if self.listframe:
-                        self.listframe.del_item(timer["index"])
-                    self.timerlist.delete(key)
-                    MessageFrame(None, "Alarm", timer["message"], self.icon)
-                if not self.listframe:
-                    if not timer["displayed"]:
-                        endtime = timer["endtime"].strftime("%H:%M:%S")
-                        message = timer["message"]
-                        balloonmessage = '{0} {1}'.format(endtime, message)
-                        self.tb_ico.ShowBalloonTip('add alarm', balloonmessage)
-                        self.timerlist.displayed(key)
-            # listframe が表示されていたら
-            if self.listframe:
-                self.listframe.update_items()
+
+        # タイマーがなければ何もしない
+        if not self.timerlist:
+            return
+
+        #print self.timerlist
+        for key, timer in self.timerlist.items():
+            # 時間になったタイマーをアラーム。
+            if timer["endtime"] < datetime.datetime.today():
+                self.alarm(key, timer)
+
+            # 新規追加されたタイマーがあり、listframe が表示されていない場合
+            # 、システムトレイにタイマー追加のバルーンを表示する。
+            if not timer["displayed"] and not self.listframe:
+                self.show_balloon(key, timer)
+
+        # listframe が表示されていたらタイマー一覧を更新する。
+        if self.listframe:
+            self.listframe.update_items()
 
 
 class MyTaskBar(wx.TaskBarIcon):
