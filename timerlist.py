@@ -70,12 +70,13 @@ class TimerList(object):
 
     def get_maxindex(self):
         # タイマーインデックスの最大値を返す
-        num = 0
-        if self.list:
-            for key, value in self.list.items():
-                if num < key:
-                    num = key
-        return num
+        max_index = 0
+        if not self.list:
+            return max_index
+        for key, value in self.list.items():
+            if max_index < key:
+                max_index = key
+        return max_index
 
     def divlist(self, inputtime):
         """数字と文字を分割してリストとして返す"""
