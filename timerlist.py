@@ -78,23 +78,21 @@ class TimerList(object):
                 max_index = key
         return max_index
 
-    def divlist(self, inputtime):
-        """数字と文字を分割してリストとして返す"""
-        org = list(inputtime)
+    def split_digit_char(self, inputtime):
+        """数字と文字を分割してリストとして返す
+
+        split_digit_char('10s 20h 30m') -> ['10', 's', '20', 'h', '30', 'm']
+        """
+        chars = list(inputtime) # 1 文字ずつのリストへ
+        while ' ' in chars: chars.remove(' ') # ' ' 削除
+
+        # 連続した数字を結合する ['1', '2', 'm', '1'] -> ['12', 'm', '1']
         new = []
-        n = ''
-        for x in org:
-            if x.isdigit():
-                n = ''.join((n, x))
-            elif x == ' ':
+        for char in chars:
+            if char.isdigit() and new and new[-1].isdigit():
+                new[-1] = ''.join((new[-1], char))
                 continue
-            else:
-                if n == '':
-                    new.append(x)
-                else:
-                    new.append(n)
-                    new.append(x)
-                    n = ''
+            new.append(char)
         return new
 
     def get_timedelta_map(self, times):
@@ -119,7 +117,7 @@ class TimerList(object):
         elif re.match('[0-9hms ]+$', inputtime):
             # 1h, 1m, 1s など
 
-            hms = self.get_timedelta_map(self.divlist(inputtime))
+            hms = self.get_timedelta_map(self.split_digit_char(inputtime))
             endtime = starttime + datetime.timedelta(
                 hours=hms['h'], minutes=hms['m'], seconds=hms['s'])
         elif re.match('[0-9]+:[0-9]+$', inputtime):
