@@ -86,7 +86,7 @@ class TimerList(object):
         chars = list(inputtime) # 1 文字ずつのリストへ
         while ' ' in chars: chars.remove(' ') # ' ' 削除
 
-        # 連続した数字を結合する ['1', '2', 'm', '1'] -> ['12', 'm', '1']
+        # 連続した数字を結合する ['1', '2', 'm', '1', 's'] -> ['12', 'm', '1', 's']
         new = []
         for char in chars:
             if char.isdigit() and new and new[-1].isdigit():
@@ -111,16 +111,17 @@ class TimerList(object):
         starttime = datetime.datetime.now()
         inputtime = inputtime.strip()
         if inputtime.isdigit():
-            # 数字だけ
-            m = int(inputtime)
-            endtime = starttime + datetime.timedelta(seconds=m * 60)
+            # 数字だけなら分として扱う
+            sec = int(inputtime) * 60
+            endtime = starttime + datetime.timedelta(seconds=sec)
         elif re.match('[0-9hms ]+$', inputtime):
-            # 1h, 1m, 1s など
+            # 1h, 1m, 1s などはそれぞれ時間、分、秒として扱う
 
             hms = self.get_timedelta_map(self.split_digit_char(inputtime))
             endtime = starttime + datetime.timedelta(
                 hours=hms['h'], minutes=hms['m'], seconds=hms['s'])
         elif re.match('[0-9]+:[0-9]+$', inputtime):
+            # 23:36 などはその時間にアラーム
             hm = [0 if x == '' else int(x) for x in inputtime.split(':', 1)]
             endtime = starttime.replace(hour=hm[0], minute=hm[1], second=0)
             if starttime > endtime:
