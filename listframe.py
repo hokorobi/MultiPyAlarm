@@ -81,16 +81,16 @@ class ListFrame(wx.Frame):
     def OnKeyDown(self, event):
         key = event.GetKeyCode()
         # listbox のスペースでチェックの切り替え（複数選択可）
-        if key == wx.WXK_SPACE:
-            index = self.listbox.GetFirstSelected()
-            while index != -1:
-                if self.listbox.IsChecked(index):
-                    self.listbox.CheckItem(index, check=False)
-                else:
-                    self.listbox.CheckItem(index, check=True)
-                index = self.listbox.GetNextSelected(index)
-        else:
+        if key != wx.WXK_SPACE:
             event.Skip()
+            return
+        index = self.listbox.GetFirstSelected()
+        while index != -1:
+            if self.listbox.IsChecked(index):
+                self.listbox.CheckItem(index, check=False)
+            else:
+                self.listbox.CheckItem(index, check=True)
+            index = self.listbox.GetNextSelected(index)
 
     def _add_timer(self, event):
         """アラームタイマー追加
