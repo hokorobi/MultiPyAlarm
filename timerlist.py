@@ -98,12 +98,12 @@ class TimerList(object):
     def get_timedelta_map(self, times):
         """時、分、秒のそれぞれの値を合計する"""
         delta = {'h': 0, 'm': 0, 's': 0}
-        t = ''
+        unit = ''
         for x in times[::-1]:
             if x.isdigit():
-                delta[t] = delta[t] + int(x)
+                delta[unit] = delta[unit] + int(x)
             else:
-                t = x
+                unit = x
         return delta
 
     def get_timer(self, inputtime, message, noneBaloon=False):
