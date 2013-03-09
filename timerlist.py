@@ -26,7 +26,10 @@ class TimerList(object):
     def __init__(self):
         self.file = TimerFile()
         self.list = self.file.get_list()
-        self.maxindex = self.get_maxindex()
+        if not self.list:
+            self.maxindex = 0
+            return
+        self.maxindex = self.get_maxindex(self.list)
         # 起動時に過ぎてしまっているアラームは削除
         # todo? 何を削除したか表示する
         self.delete_timeout()
@@ -68,12 +71,10 @@ class TimerList(object):
         self.list[key]["index"] = index
         self.file.save(self.list)
 
-    def get_maxindex(self):
+    def get_maxindex(self, timerlist):
         # タイマーインデックスの最大値を返す
         max_index = 0
-        if not self.list:
-            return max_index
-        for key, value in self.list.items():
+        for key, value in timerlist.items():
             if max_index < key:
                 max_index = key
         return max_index
