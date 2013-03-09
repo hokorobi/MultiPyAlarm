@@ -60,7 +60,7 @@ def test_get_timer_hourminutesecond():
     eq_(endtime.minute, target.minute)
     eq_(endtime.second, target.second)
 
-def test_split_digit_char():
-    eq_(timerlist.split_digit_char('10h 10m 10s'), ['10', 'h', '10', 'm', '10', 's'])
-    eq_(timerlist.split_digit_char('10h10m10s'), ['10', 'h', '10', 'm', '10', 's'])
-    eq_(timerlist.split_digit_char('10h10h10s'), ['10', 'h', '10', 'h', '10', 's'])
+def test_get_timedelta_dict():
+    eq_(timerlist.get_timedelta_dict('10s 20h 30m'), {'h': 20, 'm': 30, 's': 10})
+    eq_(timerlist.get_timedelta_dict('10s30m'), {'h': 0, 'm': 30, 's': 10})
+    eq_(timerlist.get_timedelta_dict('10s 30s'), {'h': 0, 'm': 0, 's': 40})

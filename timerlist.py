@@ -78,32 +78,24 @@ class TimerList(object):
                 max_index = key
         return max_index
 
-    def split_digit_char(self, inputtime):
-        """数字と文字を分割してリストとして返す
+    def get_timedelta_dict(self, inputtime):
+        """文字列を単位毎に合計した数値の dict として返す
 
-        split_digit_char('10s 20h 30m') -> ['10', 's', '20', 'h', '30', 'm']
+        get_timedelta_dict('10s 20h 30m') -> {'h': 10, 'm': 20, 's': 30}
         """
         # ' ' を除いた 1 文字ずつのリストへ
         chars = [x for x in list(inputtime) if x != ' ']
 
-        # 連続した数字を結合する ['1', '2', 'm', '1', 's'] -> ['12', 'm', '1', 's']
-        new = []
-        for char in chars:
-            if char.isdigit() and new and new[-1].isdigit():
-                new[-1] = ''.join((new[-1], char))
-                continue
-            new.append(char)
-        return new
-
-    def get_timedelta_map(self, times):
-        """時、分、秒のそれぞれの値を合計する"""
+        # 連続した数字を結合して、単位毎に合計して dict へ
+        # ['1', '2', 'm', '1', 's', '3', '2', 's'] -> {'h': 0, 'm': 12, 's': 33}
+        tempnum = ''
         delta = {'h': 0, 'm': 0, 's': 0}
-        unit = ''
-        for x in times[::-1]:
-            if x.isdigit():
-                delta[unit] = delta[unit] + int(x)
-            else:
-                unit = x
+        for char in chars:
+            if char.isdigit(): # 連続した数字を結合
+                tempnum = ''.join((tempnum, char))
+                continue
+            delta[char] = delta[char] + int(tempnum)
+            tempnum = ''
         return delta
 
     def get_timer(self, inputtime, message, noneBaloon=False):
@@ -117,7 +109,7 @@ class TimerList(object):
         elif re.match('[0-9hms ]+$', inputtime):
             # 1h, 1m, 1s などはそれぞれ時間、分、秒として扱う
 
-            hms = self.get_timedelta_map(self.split_digit_char(inputtime))
+            hms = self.get_timedelta_dict(inputtime)
             endtime = starttime + datetime.timedelta(
                 hours=hms['h'], minutes=hms['m'], seconds=hms['s'])
         elif re.match('[0-9]+:[0-9]+$', inputtime):
