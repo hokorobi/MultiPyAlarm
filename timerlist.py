@@ -40,7 +40,7 @@ class TimerList(object):
             raise
         self.maxindex = self.maxindex + 1
         self.list[self.maxindex] = timer
-        self.file.save(self.list)
+        self.save(self.list)
 
     def delete_from_listbox(self, index):
         # リストボックスのインデックスで削除するタイマーを指定
@@ -59,17 +59,17 @@ class TimerList(object):
             if timer["index"] > delete_listbox_index:
                 timer["index"] = timer["index"] - 1
                 self.list[key] = timer
-        self.file.save(self.list)
+        self.save(self.list)
 
     def delete_timeout(self):
         for key, timer in self.list.items():
             if timer is None or timer["endtime"] < datetime.datetime.today():
                 del self.list[key]
-        self.file.save(self.list)
+        self.save(self.list)
 
     def refresh_index(self, key, index):
         self.list[key]["index"] = index
-        self.file.save(self.list)
+        self.save(self.list)
 
     def get_maxindex(self, timerlist):
         # タイマーインデックスの最大値を返す
@@ -138,4 +138,7 @@ class TimerList(object):
 
     def displayed(self, key):
         self.list[key]["displayed"] = True
-        self.file.save(self.list)
+        self.save(self.list)
+
+    def save(self, timerlist):
+        self.file.save(timerlist)
