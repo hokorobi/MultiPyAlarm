@@ -9,8 +9,8 @@ class TimerFile(object):
     """タイマーリストのファイル処理"""
 
     def __init__(self):
-        self.timerfile = os.path.join(self.get_main_dir(), 'timerlist')
-        self.load()
+        self.timerfile = os.path.join(self._get_main_dir(), 'timerlist')
+        self._load()
 
     def main_is_frozen(self):
         """exe にした場合も実行ファイルのパスが取得できるように"""
@@ -18,12 +18,12 @@ class TimerFile(object):
                 or hasattr(sys, "importers")  # old py2exe
                 or imp.is_frozen("__main__"))  # tools/freeze
 
-    def get_main_dir(self):
+    def _get_main_dir(self):
         if self.main_is_frozen():
             return os.path.abspath(os.path.dirname(sys.executable))
         return os.path.abspath(os.path.dirname(sys.argv[0]))
 
-    def load(self):
+    def _load(self):
         try:
             with open(self.timerfile, 'rb') as f:
                 self.data = pickle.load(f)
@@ -43,9 +43,11 @@ class TimerFile(object):
         self.mtime = os.path.getmtime(self.timerfile)
 
     def get_list(self):
+        if self._ischanged():
+            self._load()
         return self.data
 
-    def ischanged(self):
+    def _ischanged(self):
         try:
             if self.mtime < os.path.getmtime(self.timerfile):
                 return True

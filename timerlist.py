@@ -126,9 +126,7 @@ class TimerList(object):
                 'message': message, 'displayed': noneBaloon}
 
     def update(self):
-        if self.file.ischanged():
-            self.file.load()
-            self.list = self.file.get_list()
+        self.list = self.file.get_list()
 
     def items(self):
         return self.list.items()
