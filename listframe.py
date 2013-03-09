@@ -31,9 +31,9 @@ class ListFrame(wx.Frame):
         top1panel = wx.Panel(toppanel, wx.ID_ANY)
         self.count_text = wx.TextCtrl(top1panel, wx.ID_ANY)
         button_add = wx.Button(top1panel, wx.ID_ANY, "&add")
-        button_add.Bind(wx.EVT_BUTTON, self.add_timer)
+        button_add.Bind(wx.EVT_BUTTON, self._add_timer)
         button_del = wx.Button(top1panel, wx.ID_ANY, "&del")
-        button_del.Bind(wx.EVT_BUTTON, self.del_checkeditem)
+        button_del.Bind(wx.EVT_BUTTON, self._del_checkeditem)
 
         top2panel = wx.Panel(toppanel, wx.ID_ANY)
         self.message = wx.TextCtrl(top2panel, wx.ID_ANY)
@@ -73,7 +73,7 @@ class ListFrame(wx.Frame):
 
         # タイマーリストを画面のリストに追加
         for key, timer in self.timerlist.items():
-            newindex = self.add_item(self.listbox, timer)
+            newindex = self._add_item(self.listbox, timer)
             self.timerlist.refresh_index(key, newindex)
             if not timer["displayed"]:
                 self.timerlist.displayed(key)
@@ -92,7 +92,7 @@ class ListFrame(wx.Frame):
         else:
             event.Skip()
 
-    def add_timer(self, event):
+    def _add_timer(self, event):
         """アラームタイマー追加
 
         ファイルに対してタイマーを追加し、onTimer で画面へ反映する。
@@ -103,7 +103,7 @@ class ListFrame(wx.Frame):
         except:
             wx.MessageBox('invalid time', 'Error', wx.OK | wx.ICON_INFORMATION)
 
-    def del_checkeditem(self, event):
+    def _del_checkeditem(self, event):
         """todo ファイルの更新チェック"""
         num = self.listbox.GetItemCount()
         # range(num) だと削除した timer の分だけ範囲外になるので逆から
@@ -112,11 +112,11 @@ class ListFrame(wx.Frame):
                 self.timerlist.delete_from_listbox(i)
                 self.listbox.DeleteItem(i)
 
-    def add_item(self, listbox, timer):
+    def _add_item(self, listbox, timer):
         left = timer["endtime"] - datetime.datetime.today()
         index = self.listbox.InsertStringItem(
             sys.maxint, timer["endtime"].strftime("%H:%M:%S"))
-        self.listbox.SetStringItem(index, 1, self.get_listbox_left(left))
+        self.listbox.SetStringItem(index, 1, self._get_listbox_left(left))
         self.listbox.SetStringItem(index, 2, timer["message"])
         return index
 
@@ -125,21 +125,21 @@ class ListFrame(wx.Frame):
 
     def update_items(self):
         """listbox の更新"""
-        if self.timerlist:
-            for key, timer in self.timerlist.items():
-                # 画面に追加されていないタイマーを追加
-                if timer["index"] is None or timer["index"] == "":
-                    index = self.add_item(self.listbox, timer)
-                    self.timerlist.refresh_index(key, index)
-                    if not timer["displayed"]:
-                        self.timerlist.displayed(key)
-                # タイマーの画面更新
-                left = timer["endtime"] - datetime.datetime.today()
-                self.listbox.SetStringItem(timer["index"], 1,
-                                           self.get_listbox_left(left))
+        if not self.timerlist:
+            return
+        for key, timer in self.timerlist.items():
+            # 画面に追加されていないタイマーを追加
+            if timer["index"] is None or timer["index"] == "":
+                index = self._add_item(self.listbox, timer)
+                self.timerlist.refresh_index(key, index)
+                if not timer["displayed"]:
+                    self.timerlist.displayed(key)
+            # タイマーの画面更新
+            left = timer["endtime"] - datetime.datetime.today()
+            self.listbox.SetStringItem(timer["index"], 1,
+                                           self._get_listbox_left(left))
 
-    @classmethod
-    def get_listbox_left(self, timedelta):
+    def _get_listbox_left(self, timedelta):
         """リストボックスの left に表示する時間を生成"""
         days = timedelta.days
         hours = timedelta.seconds / 60 / 60
