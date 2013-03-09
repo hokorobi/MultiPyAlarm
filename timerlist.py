@@ -73,11 +73,10 @@ class TimerList(object):
 
     def get_maxindex(self, timerlist):
         # タイマーインデックスの最大値を返す
-        max_index = 0
-        for key, value in timerlist.items():
-            if max_index < key:
-                max_index = key
-        return max_index
+        try:
+            return 0 if max(timerlist.keys()) == '' else max(timerlist.keys())
+        except:
+            return 0
 
     def get_timedelta_dict(self, inputtime):
         """文字列を単位毎に合計した数値の dict として返す
@@ -133,6 +132,9 @@ class TimerList(object):
 
     def items(self):
         return self.list.items()
+
+    def keys(self):
+        return self.list.keys()
 
     def displayed(self, key):
         self.list[key]["displayed"] = True
