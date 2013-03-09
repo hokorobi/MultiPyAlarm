@@ -29,10 +29,10 @@ class TimerList(object):
         if not self.list:
             self.maxindex = 0
             return
-        self.maxindex = self.get_maxindex(self.list)
+        self.maxindex = self._get_maxindex(self.list)
         # 起動時に過ぎてしまっているアラームは削除
         # todo? 何を削除したか表示する
-        self.delete_timeout(self.list)
+        self._delete_timeout(self.list)
 
     def add(self, inputtime, message, noneBaloon=False):
         timer = self.get_timer(inputtime, message, noneBaloon)
@@ -61,7 +61,7 @@ class TimerList(object):
                 self.list[key] = timer
         self.save(self.list)
 
-    def delete_timeout(self, timerlist):
+    def _delete_timeout(self, timerlist):
         for key, timer in timerlist.items():
             if timer is None or timer["endtime"] < datetime.datetime.today():
                 del timerlist[key]
@@ -71,17 +71,17 @@ class TimerList(object):
         self.list[key]["index"] = index
         self.save(self.list)
 
-    def get_maxindex(self, timerlist):
+    def _get_maxindex(self, timerlist):
         # タイマーインデックスの最大値を返す
         try:
             return 0 if max(timerlist.keys()) == '' else max(timerlist.keys())
         except:
             return 0
 
-    def get_timedelta_dict(self, inputtime):
+    def _get_timedelta_dict(self, inputtime):
         """文字列を単位毎に合計した数値の dict として返す
 
-        get_timedelta_dict('10s 20h 30m') -> {'h': 10, 'm': 20, 's': 30}
+        _get_timedelta_dict('10s 20h 30m') -> {'h': 10, 'm': 20, 's': 30}
         """
         # ' ' を除いた 1 文字ずつのリストへ
         chars = [x for x in list(inputtime) if x != ' ']
@@ -109,7 +109,7 @@ class TimerList(object):
         elif re.match('[0-9hms ]+$', inputtime):
             # 1h, 1m, 1s などはそれぞれ時間、分、秒として扱う
 
-            hms = self.get_timedelta_dict(inputtime)
+            hms = self._get_timedelta_dict(inputtime)
             endtime = starttime + datetime.timedelta(
                 hours=hms['h'], minutes=hms['m'], seconds=hms['s'])
         elif re.match('[0-9]+:[0-9]+$', inputtime):

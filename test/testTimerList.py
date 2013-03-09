@@ -61,13 +61,13 @@ def test_get_timer_hourminutesecond():
     eq_(endtime.second, target.second)
 
 def test_get_timedelta_dict():
-    eq_(timerlist.get_timedelta_dict('10s 20h 30m'), {'h': 20, 'm': 30, 's': 10})
-    eq_(timerlist.get_timedelta_dict('10s30m'), {'h': 0, 'm': 30, 's': 10})
-    eq_(timerlist.get_timedelta_dict('10s 30s'), {'h': 0, 'm': 0, 's': 40})
+    eq_(timerlist._get_timedelta_dict('10s 20h 30m'), {'h': 20, 'm': 30, 's': 10})
+    eq_(timerlist._get_timedelta_dict('10s30m'), {'h': 0, 'm': 30, 's': 10})
+    eq_(timerlist._get_timedelta_dict('10s 30s'), {'h': 0, 'm': 0, 's': 40})
 
 def test_get_maxindex():
-    eq_(timerlist.get_maxindex({1: 'a', 3: 'c', 2: 'b'}), 3)
-    eq_(timerlist.get_maxindex({'': 'a', 2: 'c', 3: 'b'}), 0)
-    eq_(timerlist.get_maxindex({'': 'a'}), 0)
-    eq_(timerlist.get_maxindex({}.keys()), 0)
-    eq_(timerlist.get_maxindex(None), 0)
+    eq_(timerlist._get_maxindex({1: 'a', 3: 'c', 2: 'b'}), 3)
+    eq_(timerlist._get_maxindex({'': 'a', 2: 'c', 3: 'b'}), 0)
+    eq_(timerlist._get_maxindex({'': 'a'}), 0)
+    eq_(timerlist._get_maxindex({}.keys()), 0)
+    eq_(timerlist._get_maxindex(None), 0)
