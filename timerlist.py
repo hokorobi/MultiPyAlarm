@@ -84,7 +84,7 @@ class TimerList(object):
         split_digit_char('10s 20h 30m') -> ['10', 's', '20', 'h', '30', 'm']
         """
         chars = list(inputtime) # 1 文字ずつのリストへ
-        while ' ' in chars: chars.remove(' ') # ' ' 削除
+        chars = filter(lambda x: x != ' ', chars) # ' ' 削除
 
         # 連続した数字を結合する ['1', '2', 'm', '1', 's'] -> ['12', 'm', '1', 's']
         new = []
