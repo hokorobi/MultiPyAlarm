@@ -83,11 +83,11 @@ class TimerList(object):
 
         _get_timedelta_dict('10s 20h 30m') -> {'h': 10, 'm': 20, 's': 30}
         """
-        # ' ' を除いた 1 文字ずつのリストへ
-        chars = [x for x in list(inputtime) if x != ' ']
+        # ' ' を除いた 1 文字ずつのタプルへ
+        chars = (x for x in tuple(inputtime) if x != ' ')
 
         # 連続した数字を結合して、単位毎に合計して dict へ
-        # ['1', '2', 'm', '1', 's', '3', '2', 's'] -> {'h': 0, 'm': 12, 's': 33}
+        # ('1', '2', 'm', '1', 's', '3', '2', 's') -> {'h': 0, 'm': 12, 's': 33}
         tempnum = ''
         delta = {'h': 0, 'm': 0, 's': 0}
         for char in chars:
