@@ -87,11 +87,11 @@ class TimerList(object):
         chars = (x for x in tuple(inputtime) if x != ' ')
 
         # 連続した数字を結合して、単位毎に合計して dict へ
-        # ('1', '2', 'm', '1', 's', '3', '2', 's') -> {'h': 0, 'm': 12, 's': 33}
+        # ('1', 'm', '1', 's', '3', '2', 's') -> {'h': 0, 'm': 1, 's': 33}
         tempnum = ''
         delta = {'h': 0, 'm': 0, 's': 0}
         for char in chars:
-            if char.isdigit(): # 連続した数字を結合
+            if char.isdigit():  # 連続した数字を結合
                 tempnum = ''.join((tempnum, char))
                 continue
             delta[char] = delta[char] + int(tempnum)

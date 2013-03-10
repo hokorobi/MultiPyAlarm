@@ -137,7 +137,7 @@ class ListFrame(wx.Frame):
             # タイマーの画面更新
             left = timer["endtime"] - datetime.datetime.today()
             self.listbox.SetStringItem(timer["index"], 1,
-                                           self._get_listbox_left(left))
+                                       self._get_listbox_left(left))
 
     def _get_listbox_left(self, timedelta):
         """リストボックスの left に表示する時間を生成"""
