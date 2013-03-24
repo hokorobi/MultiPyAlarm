@@ -14,6 +14,29 @@ class CheckListCtrl(wx.ListCtrl, CheckListCtrlMixin, ListCtrlAutoWidthMixin):
         ListCtrlAutoWidthMixin.__init__(self)
 
 
+def _get_listbox_left(timedelta):
+    """リストボックスの left に表示する時間を生成"""
+    days = timedelta.days
+    hours = timedelta.seconds / 60 / 60
+    minutes = (timedelta.seconds - hours * 60 * 60) / 60
+    seconds = timedelta.seconds - hours * 60 * 60 - minutes * 60
+
+    days_str = ""
+    hours_str = ""
+    minutes_str = "00:"
+    seconds_str = "00"
+
+    if days:
+        days_str = "{0}d ".format(days)
+    if hours:
+        hours_str = "{0:>02d}:".format(hours)
+    if minutes:
+        minutes_str = "{0:>02d}:".format(minutes)
+    if seconds:
+        seconds_str = "{0:>02d}".format(seconds)
+    return "".join((days_str, hours_str, minutes_str, seconds_str))
+
+
 class ListFrame(wx.Frame):
     """タイマーリストウィンドウ"""
 
@@ -116,7 +139,7 @@ class ListFrame(wx.Frame):
         left = timer["endtime"] - datetime.datetime.today()
         index = self.listbox.InsertStringItem(
             sys.maxint, timer["endtime"].strftime("%H:%M:%S"))
-        self.listbox.SetStringItem(index, 1, self._get_listbox_left(left))
+        self.listbox.SetStringItem(index, 1, _get_listbox_left(left))
         self.listbox.SetStringItem(index, 2, timer["message"])
         return index
 
@@ -137,22 +160,4 @@ class ListFrame(wx.Frame):
             # タイマーの画面更新
             left = timer["endtime"] - datetime.datetime.today()
             self.listbox.SetStringItem(timer["index"], 1,
-                                       self._get_listbox_left(left))
-
-    def _get_listbox_left(self, timedelta):
-        """リストボックスの left に表示する時間を生成"""
-        days = timedelta.days
-        hours = timedelta.seconds / 60 / 60
-        seconds = timedelta.seconds - hours * 60 * 60
-        minutes = seconds / 60
-        seconds = seconds - minutes * 60
-
-        time = ""
-        if days:
-            time = "{0}d ".format(days)
-        if hours:
-            time = "{0}{1:>02d}:".format(time, hours)
-        if minutes:
-            time = "{0}{1:>02d}:".format(time, minutes)
-        time = "{0}{1:>02d}".format(time, seconds)
-        return time
+                                       _get_listbox_left(left))
