@@ -128,8 +128,8 @@ class MyTaskBar(wx.TaskBarIcon):
             try:
                 self.SetBalloonTip(self.parent.icon.GetHandle(), title, msg)
                 self.SetIcon(self.icon, 'MultiPyAlarm')
-            except Exception, e:
-                print e
+            except(Exception) as e:
+                print(e)
 
     def SetBalloonTip(self, hicon, title, msg):
         """Don't call this method, call ShowBalloonTip instead"""
@@ -157,7 +157,7 @@ class MyTaskBar(wx.TaskBarIcon):
                         break
                 if not hasattr(self, "_chwnd"):
                     raise Exception
-            except:
+            except():
                 raise Exception("Icon window not found")
         return self._chwnd
 
@@ -174,7 +174,7 @@ if __name__ == "__main__":
             timerlist = TimerList()
             timerlist.add(sys.argv[1], message)
             del timerlist
-        except:
+        except():
             ex = wx.App()
             wx.MessageBox('invalid time', 'Error', wx.OK | wx.ICON_INFORMATION)
             ex.Destroy()
