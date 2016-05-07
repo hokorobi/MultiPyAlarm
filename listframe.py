@@ -17,8 +17,8 @@ class CheckListCtrl(wx.ListCtrl, CheckListCtrlMixin, ListCtrlAutoWidthMixin):
 def _get_listbox_left(timedelta):
     """リストボックスの left に表示する時間を生成"""
     days = timedelta.days
-    hours = timedelta.seconds / 60 / 60
-    minutes = (timedelta.seconds - hours * 60 * 60) / 60
+    hours = timedelta.seconds // 60 // 60
+    minutes = (timedelta.seconds - hours * 60 * 60) // 60
     seconds = timedelta.seconds - hours * 60 * 60 - minutes * 60
 
     days_str = ""
@@ -138,9 +138,9 @@ class ListFrame(wx.Frame):
     def _add_item(self, listbox, timer):
         left = timer["endtime"] - datetime.datetime.today()
         index = self.listbox.InsertStringItem(
-            sys.maxint, timer["endtime"].strftime("%H:%M:%S"))
-        self.listbox.SetStringItem(index, 1, _get_listbox_left(left))
-        self.listbox.SetStringItem(index, 2, timer["message"])
+            sys.maxsize, timer["endtime"].strftime("%H:%M:%S"))
+        self.listbox.SetItem(index, 1, _get_listbox_left(left))
+        self.listbox.SetItem(index, 2, timer["message"])
         return index
 
     def del_item(self, index):
@@ -159,5 +159,5 @@ class ListFrame(wx.Frame):
                     self.timerlist.displayed(key)
             # タイマーの画面更新
             left = timer["endtime"] - datetime.datetime.today()
-            self.listbox.SetStringItem(timer["index"], 1,
-                                       _get_listbox_left(left))
+            self.listbox.SetItem(timer["index"], 1, _get_listbox_left(left))
+

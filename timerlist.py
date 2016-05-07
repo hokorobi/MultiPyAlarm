@@ -62,10 +62,8 @@ class TimerList(object):
         self._save(self.list)
 
     def _delete_timeout(self, timerlist):
-        for key, timer in timerlist.items():
-            if timer is None or timer["endtime"] < datetime.datetime.today():
-                del timerlist[key]
-        self._save(timerlist)
+        temp_timerlist = [k for k, t in timerlist.items() if t is not None and t["endtime"] >= datetime.datetime.today()]
+        self._save(temp_timerlist)
 
     def refresh_index(self, key, index):
         self.list[key]["index"] = index

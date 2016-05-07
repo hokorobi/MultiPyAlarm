@@ -32,9 +32,9 @@ class TimerFile(object):
             # EOFError ファイルがない場合
             # KeyError YAML のデータが残っていた場合
             self.data = dict()
-        except IOError, (errno, strerror):
+        except (IOError) as e:
             self.data = dict()
-            if errno != 2:  # not exists
+            if e.errno != 2:  # not exists
                 raise
 
     def save(self, data):

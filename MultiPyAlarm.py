@@ -3,6 +3,7 @@ import os
 import time
 import sys
 import wx
+import wx.adv
 import datetime
 from namedmutex import NamedMutex
 import win32api
@@ -52,7 +53,6 @@ class MyApp(wx.App):
         # listframe が表示されていたら、タイマー一覧から削除
         if self.listframe:
             self.listframe.del_item(timer["index"])
-        self.timerlist.delete(key)
         MessageFrame(None, "Alarm", timer["message"], self.icon)
 
     def onTimer(self, event):
@@ -74,29 +74,33 @@ class MyApp(wx.App):
             return
 
         #print self.timerlist
+        del_keys = []
         for key, timer in self.timerlist.items():
             # 時間になったタイマーをアラーム。
             if timer["endtime"] < datetime.datetime.today():
                 self.alarm(key, timer)
+                del_keys.append(key)
 
             # 新規追加されたタイマーがあり、listframe が表示されていない場合
             # 、システムトレイにタイマー追加のバルーンを表示する。
             if not timer["displayed"] and not self.listframe:
                 self.show_balloon(key, timer)
+        for key in del_keys:
+            self.timerlist.delete(key)
 
         # listframe が表示されていたらタイマー一覧を更新する。
         if self.listframe:
             self.listframe.update_items()
 
 
-class MyTaskBar(wx.TaskBarIcon):
+class MyTaskBar(wx.adv.TaskBarIcon):
     def __init__(self, parent, icon):
-        wx.TaskBarIcon.__init__(self)
+        wx.adv.TaskBarIcon.__init__(self)
         self.parent = parent
         self.icon = icon
 
         self.SetIcon(self.icon, 'MultiPyAlarm')
-        self.Bind(wx.EVT_TASKBAR_LEFT_DCLICK, self.OnTbiLeftDoubleClicked)
+        self.Bind(wx.adv.EVT_TASKBAR_LEFT_DCLICK, self.OnTbiLeftDoubleClicked)
 
     def CreatePopupMenu(self):
         traymenu = wx.Menu()
@@ -180,7 +184,7 @@ if __name__ == "__main__":
             ex.Destroy()
 
     # 二重起動防止
-    mut = NamedMutex("MultiPyAlarm", True, 0)
+    mut = NamedMutex(b'MultiPyAlarm', True, 0)
     if not mut.acret:
         sys.exit()
 
