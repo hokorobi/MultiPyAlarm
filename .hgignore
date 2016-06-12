@@ -3,3 +3,5 @@ syntax: glob
 build
 dist
 *.orig
+timerlist
+.tags
