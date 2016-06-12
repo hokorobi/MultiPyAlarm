@@ -11,7 +11,7 @@ class MessageFrame(wx.Frame):
         # アイコン設定
         self.SetIcon(icon)
         # キーイベント
-        self.Bind(wx.EVT_KEY_DOWN, self.OnKeyDown)
+        self.Bind(wx.EVT_CHAR_HOOK, self.OnKeyDown)
 
         if not message:
             message = "IT'S TIME!"
