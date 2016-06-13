@@ -107,7 +107,7 @@ class MyTaskBar(wx.adv.TaskBarIcon):
         id = wx.NewId()
         item = wx.MenuItem(traymenu, id=id, text=u'&Quit')
         self.Bind(wx.EVT_MENU, self.OnQuit, id=id)
-        traymenu.AppendItem(item)
+        traymenu.Append(item)
         return traymenu
 
     def OnTbiLeftDoubleClicked(self, evt):
