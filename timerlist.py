@@ -62,7 +62,10 @@ class TimerList(object):
         self._save(self.list)
 
     def _delete_timeout(self, timerlist):
-        temp_timerlist = [k for k, t in timerlist.items() if t is not None and t["endtime"] >= datetime.datetime.today()]
+        temp_timerlist = [
+            k for k, t in timerlist.items()
+            if t is not None and t["endtime"] >= datetime.datetime.today()
+        ]
         self._save(temp_timerlist)
 
     def refresh_index(self, key, index):
@@ -73,7 +76,7 @@ class TimerList(object):
         # タイマーインデックスの最大値を返す
         try:
             return 0 if max(timerlist.keys()) == '' else max(timerlist.keys())
-        except:
+        except Exception:
             return 0
 
     def _get_timedelta_dict(self, inputtime):

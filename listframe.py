@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
-import wx
 import datetime
 import sys
-from wx.lib.mixins.listctrl import CheckListCtrlMixin, ListCtrlAutoWidthMixin
-from timerlist import TimerList
+
+import wx
+from wx.lib.mixins.listctrl import CheckListCtrlMixin
+from wx.lib.mixins.listctrl import ListCtrlAutoWidthMixin
 
 
 class CheckListCtrl(wx.ListCtrl, CheckListCtrlMixin, ListCtrlAutoWidthMixin):
@@ -123,7 +124,7 @@ class ListFrame(wx.Frame):
         try:
             self.timerlist.add(self.count_text.GetValue(),
                                self.message.GetValue(), True)
-        except:
+        except Exception:
             wx.MessageBox('invalid time', 'Error', wx.OK | wx.ICON_INFORMATION)
 
     def _del_checkeditem(self, event):
@@ -160,4 +161,3 @@ class ListFrame(wx.Frame):
             # タイマーの画面更新
             left = timer["endtime"] - datetime.datetime.today()
             self.listbox.SetItem(timer["index"], 1, _get_listbox_left(left))
-

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
+import imp
 import os
 import pickle
 import sys
-import imp
 
 
 class TimerFile(object):
@@ -53,6 +53,6 @@ class TimerFile(object):
                 return True
             else:
                 return False
-        except:
+        except Exception:
             # ファイルが削除されてしまっても、とりあえずエラーとならないように
             return False

@@ -1,20 +1,21 @@
 # -*- coding: utf-8 -*-
-import os
-import time
-import sys
-import wx
-import wx.adv
 import datetime
-from namedmutex import NamedMutex
+import os
+import sys
+
 import win32api
 import win32gui
-from messageframe import MessageFrame
+import wx
+import wx.adv
+
 from listframe import ListFrame
+from messageframe import MessageFrame
+from namedmutex import NamedMutex
 from timerlist import TimerList
 
 
 class MyApp(wx.App):
-    #def __init__(self):
+    # def __init__(self):
     #    wx.App.__init__(self,False)
 
     def OnInit(self):
@@ -36,7 +37,7 @@ class MyApp(wx.App):
         self.listframe = ListFrame(None, self.timerlist, self.icon)
         self.listframe.Show()
 
-        #タイマースタート
+        # タイマースタート
         self.timer = wx.Timer(self)
         self.timer.Start(1000)
         self.Bind(wx.EVT_TIMER, self.onTimer, self.timer)
@@ -73,7 +74,7 @@ class MyApp(wx.App):
         if not self.timerlist:
             return
 
-        #print self.timerlist
+        # print self.timerlist
         del_keys = []
         for key, timer in self.timerlist.items():
             # 時間になったタイマーをアラーム。
