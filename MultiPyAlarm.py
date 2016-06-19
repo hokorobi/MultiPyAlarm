@@ -10,7 +10,7 @@ import wx.adv
 
 from listframe import ListFrame
 from messageframe import MessageFrame
-from namedmutex import NamedMutex
+from namedmutex.namedmutex import NamedMutex
 from timerlist import TimerList
 
 
