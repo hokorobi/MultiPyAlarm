@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import datetime
 import re
+
 from timerfile import TimerFile
 
 
@@ -31,7 +32,7 @@ class TimerList(object):
             return
         self.maxindex = self._get_maxindex(self.list)
         # 起動時に過ぎてしまっているアラームは削除
-        # todo? 何を削除したか表示する
+        # TODO: ? 何を削除したか表示する
         self._delete_timeout(self.list)
 
     def add(self, inputtime, message, noneBaloon=False):
@@ -62,11 +63,14 @@ class TimerList(object):
         self._save(self.list)
 
     def _delete_timeout(self, timerlist):
-        temp_timerlist = [
+        deleteindexes = [
             k for k, t in timerlist.items()
-            if t is not None and t["endtime"] >= datetime.datetime.today()
+            if t is not None and t["endtime"] < datetime.datetime.now()
         ]
-        self._save(temp_timerlist)
+        if len(deleteindexes):
+            for i in deleteindexes:
+                del self.list[i]
+            self._save(self.list)
 
     def refresh_index(self, key, index):
         self.list[key]["index"] = index
