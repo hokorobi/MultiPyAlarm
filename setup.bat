@@ -1,1 +1,1 @@
-python setup.py py2exe
+pyinstaller --noconfirm --log-level=WARN --clean MultiPyAlarm.spec
