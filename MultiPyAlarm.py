@@ -190,4 +190,5 @@ if __name__ == "__main__":
         sys.exit()
 
     app = MyApp()
+    app.RedirectStdio("MultiPyAlarm.log")
     app.MainLoop()
