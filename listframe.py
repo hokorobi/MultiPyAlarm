@@ -139,7 +139,7 @@ class ListFrame(wx.Frame):
     def _add_item(self, listbox, timer):
         left = timer["endtime"] - datetime.datetime.today()
         index = self.listbox.InsertStringItem(
-            sys.maxsize, timer["endtime"].strftime("%H:%M:%S"))
+            2147483647, timer["endtime"].strftime("%H:%M:%S"))
         self.listbox.SetItem(index, 1, _get_listbox_left(left))
         self.listbox.SetItem(index, 2, timer["message"])
         return index
