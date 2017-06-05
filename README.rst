@@ -45,5 +45,5 @@ MultiPyAlarm [time [message1 message2 ...]]
   - python 3.6.1 32bit
   - PyInstaller 3.3.dev0+5b6288b
   - pywin32 220
-  - wxPython 4.0.0a2
+  - wxPython 4.0.0a3
 
