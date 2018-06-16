@@ -34,7 +34,6 @@ class TimerList(object):
             return
         self.maxindex = self._get_maxindex(self.list)
         # 起動時に過ぎてしまっているアラームは削除
-        # TODO: ? 何を削除したか表示する
         self._delete_timeout(self.list)
 
     def add(self, inputtime, message, noneBaloon=False):
@@ -72,6 +71,7 @@ class TimerList(object):
         ]
         if len(deleteindexes):
             for i in deleteindexes:
+                self.logger.print(f"Delete timeout: {self.list[i]['message']}")
                 del self.list[i]
             self._save(self.list)
 
