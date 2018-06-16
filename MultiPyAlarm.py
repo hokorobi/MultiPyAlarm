@@ -12,6 +12,7 @@ from listframe import ListFrame
 from messageframe import MessageFrame
 from namedmutex.namedmutex import NamedMutex
 from timerlist import TimerList
+from logger import Logger
 
 
 class MyApp(wx.App):
@@ -25,6 +26,8 @@ class MyApp(wx.App):
 
         # タスクトレイにアイコン表示
         self.tb_ico = MyTaskBar(self, self.icon)
+
+        self.logger = Logger()
 
         # アラームタイマーのリスト
         self.timerlist = TimerList()
@@ -80,6 +83,9 @@ class MyApp(wx.App):
             # 時間になったタイマーをアラーム。
             if timer["endtime"] < datetime.datetime.today():
                 self.alarm(key, timer)
+                # FIXME: 3 行 Alarm が出力される。
+                # このループで 3 回実行されているわけではないみたい
+                self.logger.print(f"Alarm: {timer['message']}")
                 del_keys.append(key)
 
             # 新規追加されたタイマーがあり、listframe が表示されていない場合

@@ -3,6 +3,7 @@ import datetime
 import re
 
 from timerfile import TimerFile
+from logger import Logger
 
 
 class TimerList(object):
@@ -25,6 +26,7 @@ class TimerList(object):
     }
     """
     def __init__(self):
+        self.logger = Logger()
         self.file = TimerFile()
         self.list = self.file.get_list()
         if not self.list:
@@ -39,6 +41,7 @@ class TimerList(object):
         timer = self.get_timer(inputtime, message, noneBaloon)
         if not timer:
             raise
+        self.logger.print(f"Add: {message}")
         self.maxindex = self.maxindex + 1
         self.list[self.maxindex] = timer
         self._save(self.list)
