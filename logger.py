@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from logging import getLogger, Formatter, FileHandler, INFO
 
+
 class Logger(object):
     def __init__(self):
         self.logger = getLogger(__name__)
@@ -14,4 +15,3 @@ class Logger(object):
 
     def print(self, s):
         self.logger.info(s)
-
