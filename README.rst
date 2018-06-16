@@ -42,8 +42,8 @@ MultiPyAlarm [time [message1 message2 ...]]
 - 開発環境
 
   - Windows10 Home 64bit
-  - python 3.6.4 64bit
+  - python 3.6.5 32bit
   - PyInstaller 3.3.1
-  - pywin32 220
+  - pywin32 223
   - wxPython 4.0.1
 
