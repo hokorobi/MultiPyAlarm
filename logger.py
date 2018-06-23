@@ -13,5 +13,5 @@ class Logger(object):
         self.logger.addHandler(self.handler)
         self.logger.propagate = False
 
-    def print(self, s):
-        self.logger.info(s)
+    def timer(self, action, timer):
+        self.logger.info(f"[{action}] message: {timer['message']}, starttime: {timer['starttime']}, endtime: {timer['endtime']}")

@@ -40,7 +40,7 @@ class TimerList(object):
         timer = self.get_timer(inputtime, message, noneBaloon)
         if not timer:
             raise
-        self.logger.print(f"Add: {message}")
+        self.logger.timer("Add", timer)
         self.maxindex = self.maxindex + 1
         self.list[self.maxindex] = timer
         self._save(self.list)
@@ -71,7 +71,7 @@ class TimerList(object):
         ]
         if len(deleteindexes):
             for i in deleteindexes:
-                self.logger.print(f"Delete timeout: {self.list[i]['message']}")
+                self.logger.timer("Delete timeout", self.list[i])
                 del self.list[i]
             self._save(self.list)
 

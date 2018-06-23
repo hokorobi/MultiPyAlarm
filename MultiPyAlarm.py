@@ -85,7 +85,7 @@ class MyApp(wx.App):
                 self.alarm(key, timer)
                 # FIXME: 3 行 Alarm が出力される。
                 # このループで 3 回実行されているわけではないみたい
-                self.logger.print(f"Alarm: {timer['message']}")
+                self.logger.timer("Alarm", timer)
                 del_keys.append(key)
 
             # 新規追加されたタイマーがあり、listframe が表示されていない場合
