@@ -5,4 +5,4 @@ dist
 *.orig
 timerlist
 .tags
-venv
+venv*
