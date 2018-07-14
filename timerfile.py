@@ -3,25 +3,15 @@ import imp
 import os
 import pickle
 import sys
+from pathlib import Path
 
 
 class TimerFile(object):
     """タイマーリストのファイル処理"""
 
     def __init__(self):
-        self.timerfile = os.path.join(self._get_main_dir(), 'timerlist')
+        self.timerfile = Path(sys.argv[0]).resolve().parent / 'timerlist'
         self._load()
-
-    def _main_is_frozen(self):
-        """exe にした場合も実行ファイルのパスが取得できるように"""
-        return (hasattr(sys, "frozen")  # new py2exe
-                or hasattr(sys, "importers")  # old py2exe
-                or imp.is_frozen("__main__"))  # tools/freeze
-
-    def _get_main_dir(self):
-        if self._main_is_frozen():
-            return os.path.abspath(os.path.dirname(sys.executable))
-        return os.path.abspath(os.path.dirname(sys.argv[0]))
 
     def _load(self):
         try:
