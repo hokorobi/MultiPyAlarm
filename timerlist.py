@@ -25,6 +25,7 @@ class TimerList(object):
         # 加された場合にバルーンを表示をするので、その判断に使う。
     }
     """
+
     def __init__(self):
         self.logger = Logger()
         self.file = TimerFile()
@@ -66,7 +67,8 @@ class TimerList(object):
 
     def _delete_timeout(self, timerlist):
         deleteindexes = [
-            k for k, t in timerlist.items()
+            k
+            for k, t in timerlist.items()
             if t is not None and t["endtime"] < datetime.datetime.now()
         ]
         if len(deleteindexes):
@@ -82,7 +84,7 @@ class TimerList(object):
     def _get_maxindex(self, timerlist):
         # タイマーインデックスの最大値を返す
         try:
-            return 0 if max(timerlist.keys()) == '' else max(timerlist.keys())
+            return 0 if max(timerlist.keys()) == "" else max(timerlist.keys())
         except Exception:
             return 0
 
@@ -92,18 +94,18 @@ class TimerList(object):
         _get_timedelta_dict('10s 20h 30m') -> {'h': 10, 'm': 20, 's': 30}
         """
         # ' ' を除いた 1 文字ずつのタプルへ
-        chars = (x for x in inputtime if x != ' ')
+        chars = (x for x in inputtime if x != " ")
 
         # 連続した数字を結合して、単位毎に合計して dict へ
         # ('1', 'm', '1', 's', '3', '2', 's') -> {'h': 0, 'm': 1, 's': 33}
-        tempnum = ''
-        delta = {'h': 0, 'm': 0, 's': 0}
+        tempnum = ""
+        delta = {"h": 0, "m": 0, "s": 0}
         for char in chars:
             if char.isdigit():  # 連続した数字を結合
-                tempnum = ''.join((tempnum, char))
+                tempnum = "".join((tempnum, char))
                 continue
             delta[char] = delta[char] + int(tempnum)
-            tempnum = ''
+            tempnum = ""
         return delta
 
     def get_timer(self, inputtime, message, noneBaloon=False):
@@ -114,15 +116,16 @@ class TimerList(object):
             # 数字だけなら分として扱う
             sec = int(inputtime) * 60
             endtime = starttime + datetime.timedelta(seconds=sec)
-        elif re.match('[0-9hms ]+$', inputtime):
+        elif re.match("[0-9hms ]+$", inputtime):
             # 1h, 1m, 1s などはそれぞれ時間、分、秒として扱う
 
             hms = self._get_timedelta_dict(inputtime)
             endtime = starttime + datetime.timedelta(
-                hours=hms['h'], minutes=hms['m'], seconds=hms['s'])
-        elif re.match('[0-9]+:[0-9]+$', inputtime):
+                hours=hms["h"], minutes=hms["m"], seconds=hms["s"]
+            )
+        elif re.match("[0-9]+:[0-9]+$", inputtime):
             # 23:36 などはその時間にアラーム
-            hm = [0 if x == '' else int(x) for x in inputtime.split(':', 1)]
+            hm = [0 if x == "" else int(x) for x in inputtime.split(":", 1)]
             endtime = starttime.replace(hour=hm[0], minute=hm[1], second=0)
             if starttime > endtime:
                 endtime = endtime + datetime.timedelta(days=1)
@@ -130,8 +133,13 @@ class TimerList(object):
             # todo? d で日数も扱えるように
             # todo? yyyy-mm-dd も扱えるように
             return None
-        return {'index': '', 'starttime': starttime, 'endtime': endtime,
-                'message': message, 'displayed': noneBaloon}
+        return {
+            "index": "",
+            "starttime": starttime,
+            "endtime": endtime,
+            "message": message,
+            "displayed": noneBaloon,
+        }
 
     def update(self):
         self.list = self.file.get_list()

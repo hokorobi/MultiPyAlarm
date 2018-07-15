@@ -9,8 +9,7 @@ from wx.lib.mixins.listctrl import ListCtrlAutoWidthMixin
 
 class CheckListCtrl(wx.ListCtrl, CheckListCtrlMixin, ListCtrlAutoWidthMixin):
     def __init__(self, parent):
-        wx.ListCtrl.__init__(self, parent, -1,
-                             style=wx.LC_REPORT | wx.SUNKEN_BORDER)
+        wx.ListCtrl.__init__(self, parent, -1, style=wx.LC_REPORT | wx.SUNKEN_BORDER)
         CheckListCtrlMixin.__init__(self)
         ListCtrlAutoWidthMixin.__init__(self)
 
@@ -42,7 +41,7 @@ class ListFrame(wx.Frame):
     """タイマーリストウィンドウ"""
 
     def __init__(self, parent, timerlist, icon):
-        wx.Frame.__init__(self, parent, title='MultiPyAlarm', size=(300, 200))
+        wx.Frame.__init__(self, parent, title="MultiPyAlarm", size=(300, 200))
         self.timerlist = timerlist
 
         self.SetIcon(icon)
@@ -65,13 +64,12 @@ class ListFrame(wx.Frame):
         bottompanel = wx.Panel(basepanel, wx.ID_ANY, style=wx.BORDER_SUNKEN)
         self.listbox = CheckListCtrl(bottompanel)
         self.listbox.Bind(wx.EVT_KEY_DOWN, self.OnKeyDown)
-        self.listbox.InsertColumn(0, 'alarm', width=80)
-        self.listbox.InsertColumn(1, 'left')
-        self.listbox.InsertColumn(2, 'message')
+        self.listbox.InsertColumn(0, "alarm", width=80)
+        self.listbox.InsertColumn(1, "left")
+        self.listbox.InsertColumn(2, "message")
 
         layout_bottom = wx.BoxSizer(wx.HORIZONTAL)
-        layout_bottom.Add(self.listbox, proportion=1, flag=wx.GROW | wx.ALL,
-                          border=3)
+        layout_bottom.Add(self.listbox, proportion=1, flag=wx.GROW | wx.ALL, border=3)
 
         layout_top1 = wx.BoxSizer(wx.HORIZONTAL)
         layout_top1.Add(self.count_text)
@@ -122,16 +120,17 @@ class ListFrame(wx.Frame):
         ファイルに対してタイマーを追加し、onTimer で画面へ反映する。
         """
         try:
-            self.timerlist.add(self.count_text.GetValue(),
-                               self.message.GetValue(), True)
+            self.timerlist.add(
+                self.count_text.GetValue(), self.message.GetValue(), True
+            )
         except Exception:
-            wx.MessageBox('invalid time', 'Error', wx.OK | wx.ICON_INFORMATION)
+            wx.MessageBox("invalid time", "Error", wx.OK | wx.ICON_INFORMATION)
 
     def _del_checkeditem(self, event):
         """todo ファイルの更新チェック"""
         num = self.listbox.GetItemCount()
         # range(num) だと削除した timer の分だけ範囲外になるので逆から
-        for i in range(num-1, -1, -1):
+        for i in range(num - 1, -1, -1):
             if self.listbox.IsChecked(i):
                 self.timerlist.delete_from_listbox(i)
                 self.listbox.DeleteItem(i)
@@ -139,7 +138,8 @@ class ListFrame(wx.Frame):
     def _add_item(self, listbox, timer):
         left = timer["endtime"] - datetime.datetime.today()
         index = self.listbox.InsertItem(
-            2147483647, timer["endtime"].strftime("%H:%M:%S"))
+            2147483647, timer["endtime"].strftime("%H:%M:%S")
+        )
         self.listbox.SetItem(index, 1, _get_listbox_left(left))
         self.listbox.SetItem(index, 2, timer["message"])
         return index

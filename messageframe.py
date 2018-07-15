@@ -16,8 +16,9 @@ class MessageFrame(wx.Frame):
         if not message:
             message = "IT'S TIME!"
         panel = wx.Panel(self, wx.ID_ANY)
-        font = wx.Font(32, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL,
-                       wx.FONTWEIGHT_NORMAL)
+        font = wx.Font(
+            32, wx.FONTFAMILY_DEFAULT, wx.FONTSTYLE_NORMAL, wx.FONTWEIGHT_NORMAL
+        )
         text = wx.StaticText(panel, wx.ID_ANY, message, style=wx.TE_CENTER)
         text.SetFont(font)
         text.CenterOnParent()
