@@ -43,7 +43,7 @@ MultiPyAlarm [time [message1 message2 ...]]
 
   - Windows10 Home 64bit
   - Python 3.7.3 64bit
-  - PyInstaller 3.4+PR3965
+  - PyInstaller 3.5.dev0+d74052489
   - pywin32 224
   - wxPython 4.0.6
 
