@@ -6,6 +6,7 @@ MultiPyAlarm
 | 起動済みの場合は、二重起動せずにタイマーを追加する。
 | タイマーが残った状態で MultiPyAlarm を終了しても、タイマーは保持される。
 | 起動時に保持されたタイマーの時刻を過ぎていれば、そのタイマーは削除される。
+| `binary <dist/MultiPyAlarm.exe>`_
 
 コマンドライン
 --------------
@@ -43,7 +44,7 @@ MultiPyAlarm [time [message1 message2 ...]]
 
   - Windows10 Home 64bit
   - Python 3.7.3 64bit
-  - PyInstaller 3.5.dev0+d74052489
+  - PyInstaller 3.5
   - pywin32 224
   - wxPython 4.0.6
 
