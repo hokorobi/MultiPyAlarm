@@ -1,5 +1,7 @@
+_venv
 build
 dist
+test
 
 tags
 *.pyc
