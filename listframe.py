@@ -3,14 +3,12 @@ import datetime
 import sys
 
 import wx
-from wx.lib.mixins.listctrl import CheckListCtrlMixin
 from wx.lib.mixins.listctrl import ListCtrlAutoWidthMixin
 
 
-class CheckListCtrl(wx.ListCtrl, CheckListCtrlMixin, ListCtrlAutoWidthMixin):
+class CheckListCtrl(wx.ListCtrl, ListCtrlAutoWidthMixin):
     def __init__(self, parent):
         wx.ListCtrl.__init__(self, parent, -1, style=wx.LC_REPORT | wx.SUNKEN_BORDER)
-        CheckListCtrlMixin.__init__(self)
         ListCtrlAutoWidthMixin.__init__(self)
 
 
