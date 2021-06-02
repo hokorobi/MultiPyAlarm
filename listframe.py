@@ -55,15 +55,13 @@ class ListFrame(wx.Frame):
         self.count_text = wx.TextCtrl(top1panel, wx.ID_ANY)
         button_add = wx.Button(top1panel, wx.ID_ANY, "&add")
         button_add.Bind(wx.EVT_BUTTON, self._add_timer)
-        button_del = wx.Button(top1panel, wx.ID_ANY, "&del")
-        button_del.Bind(wx.EVT_BUTTON, self._del_checkeditem)
 
         top2panel = wx.Panel(toppanel, wx.ID_ANY)
         self.message = wx.TextCtrl(top2panel, wx.ID_ANY)
 
         bottompanel = wx.Panel(basepanel, wx.ID_ANY, style=wx.BORDER_SUNKEN)
         self.listbox = CheckListCtrl(bottompanel)
-        self.listbox.Bind(wx.EVT_KEY_DOWN, self.OnKeyDown)
+        self.listbox.Bind(wx.EVT_LEFT_DCLICK, self.OnDoubleClick)
         self.listbox.InsertColumn(0, "alarm", width=80)
         self.listbox.InsertColumn(1, "left")
         self.listbox.InsertColumn(2, "message")
@@ -74,7 +72,6 @@ class ListFrame(wx.Frame):
         layout_top1 = wx.BoxSizer(wx.HORIZONTAL)
         layout_top1.Add(self.count_text)
         layout_top1.Add(button_add)
-        layout_top1.Add(button_del)
 
         layout_top2 = wx.BoxSizer(wx.HORIZONTAL)
         layout_top2.Add(self.message, proportion=1, flag=wx.GROW)
@@ -100,19 +97,10 @@ class ListFrame(wx.Frame):
             if not timer["displayed"]:
                 self.timerlist.displayed(key)
 
-    def OnKeyDown(self, event):
-        key = event.GetKeyCode()
-        # listbox のスペースでチェックの切り替え（複数選択可）
-        if key != wx.WXK_SPACE:
-            event.Skip()
-            return
+    def OnDoubleClick(self, event):
         index = self.listbox.GetFirstSelected()
-        while index != -1:
-            if self.listbox.IsChecked(index):
-                self.listbox.CheckItem(index, check=False)
-            else:
-                self.listbox.CheckItem(index, check=True)
-            index = self.listbox.GetNextSelected(index)
+        self.timerlist.delete_from_listbox(index)
+        self.listbox.DeleteItem(index)
 
     def _add_timer(self, event):
         """アラームタイマー追加
@@ -125,15 +113,6 @@ class ListFrame(wx.Frame):
             )
         except Exception:
             wx.MessageBox("invalid time", "Error", wx.OK | wx.ICON_INFORMATION)
-
-    def _del_checkeditem(self, event):
-        """todo ファイルの更新チェック"""
-        num = self.listbox.GetItemCount()
-        # range(num) だと削除した timer の分だけ範囲外になるので逆から
-        for i in range(num - 1, -1, -1):
-            if self.listbox.IsChecked(i):
-                self.timerlist.delete_from_listbox(i)
-                self.listbox.DeleteItem(i)
 
     def _add_item(self, listbox, timer):
         left = timer["endtime"] - datetime.datetime.today()
