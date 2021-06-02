@@ -1,4 +1,4 @@
-_venv
+_venv*
 build
 dist
 test
