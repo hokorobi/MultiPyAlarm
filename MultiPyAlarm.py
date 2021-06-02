@@ -49,8 +49,8 @@ class MyApp(wx.App):
     def show_balloon(self, key, timer):
         endtime = timer["endtime"].strftime("%H:%M:%S")
         message = timer["message"]
-        balloonmessage = "{0} {1}".format(endtime, message)
-        self.tb_ico.ShowBalloonTip("add alarm", balloonmessage)
+        balloonmessage = '{0} {1}'.format(endtime, message)
+        self.tb_ico.ShowBalloonTip('add alarm', balloonmessage)
         self.timerlist.displayed(key)
 
     def alarm(self, key, timer):
@@ -106,13 +106,13 @@ class MyTaskBar(wx.adv.TaskBarIcon):
         self.parent = parent
         self.icon = icon
 
-        self.SetIcon(self.icon, "MultiPyAlarm")
+        self.SetIcon(self.icon, 'MultiPyAlarm')
         self.Bind(wx.adv.EVT_TASKBAR_LEFT_DCLICK, self.OnTbiLeftDoubleClicked)
 
     def CreatePopupMenu(self):
         traymenu = wx.Menu()
         id = wx.NewId()
-        item = wx.MenuItem(traymenu, id=id, text=u"&Quit")
+        item = wx.MenuItem(traymenu, id=id, text=u'&Quit')
         self.Bind(wx.EVT_MENU, self.OnQuit, id=id)
         traymenu.Append(item)
         return traymenu
@@ -121,7 +121,8 @@ class MyTaskBar(wx.adv.TaskBarIcon):
         if self.parent.listframe:
             self.parent.listframe.Raise()
         else:
-            self.parent.listframe = ListFrame(None, self.parent.timerlist, self.icon)
+            self.parent.listframe = ListFrame(None, self.parent.timerlist,
+                                              self.icon)
             self.parent.listframe.Show()
 
     def OnQuit(self, evt):
@@ -134,27 +135,21 @@ class MyTaskBar(wx.adv.TaskBarIcon):
          @param title The title of the balloon
          @param msg   The tooltip message
         """
-        if os.name == "nt":
+        if os.name == 'nt':
             try:
                 self.SetBalloonTip(self.parent.icon.GetHandle(), title, msg)
-                self.SetIcon(self.icon, "MultiPyAlarm")
-            except (Exception) as e:
+                self.SetIcon(self.icon, 'MultiPyAlarm')
+            except(Exception) as e:
                 print(e)
 
     def SetBalloonTip(self, hicon, title, msg):
         """Don't call this method, call ShowBalloonTip instead"""
-        lpdata = (
-            self.GetIconHandle(),
-            99,
-            win32gui.NIF_MESSAGE | win32gui.NIF_ICON | win32gui.NIF_INFO,
-            0,
-            hicon,
-            "",
-            msg,
-            0,
-            title,
-            win32gui.NIIF_INFO,
-        )
+        lpdata = (self.GetIconHandle(),
+                  99,
+                  win32gui.NIF_MESSAGE | win32gui.NIF_ICON | win32gui.NIF_INFO,
+                  0,
+                  hicon,
+                  '', msg, 0, title, win32gui.NIIF_INFO)
         win32gui.Shell_NotifyIcon(win32gui.NIM_MODIFY, lpdata)
 
     def GetIconHandle(self):
@@ -167,14 +162,13 @@ class MyTaskBar(wx.adv.TaskBarIcon):
             try:
                 for handle in wx.GetTopLevelWindows():
                     handle = handle.GetHandle()
-                    if len(
-                        win32gui.GetWindowText(handle)
-                    ) == 0 and win32gui.GetWindowRect(handle) == (0, 0, 400, 250):
+                    if len(win32gui.GetWindowText(handle)) == 0 and \
+                       win32gui.GetWindowRect(handle) == (0, 0, 400, 250):
                         self._chwnd = handle
                         break
                 if not hasattr(self, "_chwnd"):
                     raise Exception
-            except ():
+            except():
                 raise Exception("Icon window not found")
         return self._chwnd
 
@@ -191,13 +185,13 @@ if __name__ == "__main__":
             timerlist = TimerList()
             timerlist.add(sys.argv[1], message)
             del timerlist
-        except ():
+        except():
             ex = wx.App()
-            wx.MessageBox("invalid time", "Error", wx.OK | wx.ICON_INFORMATION)
+            wx.MessageBox('invalid time', 'Error', wx.OK | wx.ICON_INFORMATION)
             ex.Destroy()
 
     # 二重起動防止
-    mut = NamedMutex(b"MultiPyAlarm", True, 0)
+    mut = NamedMutex(b'MultiPyAlarm', True, 0)
     if not mut.acret:
         sys.exit()
 
