@@ -1,16 +1,4 @@
-# -*- mode: python -*-
-
-# workaround pywin32 227
-import os
-import site
-import sys
-for maybe in site.getsitepackages():
-	pywin32_system32=os.path.join(maybe,"pywin32_system32")
-	if os.path.isdir(pywin32_system32):
-		sys.path.append(pywin32_system32)
-
 block_cipher = None
-
 
 a = Analysis(['MultiPyAlarm.py'],
              binaries=None,
