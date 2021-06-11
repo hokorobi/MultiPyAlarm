@@ -117,7 +117,7 @@ class MyTaskBar(wx.adv.TaskBarIcon):
 
     def CreatePopupMenu(self):
         traymenu = wx.Menu()
-        id = wx.NewId()
+        id = wx.NewIdRef()
         item = wx.MenuItem(traymenu, id=id, text=u'&Quit')
         self.Bind(wx.EVT_MENU, self.OnQuit, id=id)
         traymenu.Append(item)
