@@ -23,6 +23,7 @@ class MyApp(wx.App):
         # アイコン取得
         exeName = win32api.GetModuleFileName(win32api.GetModuleHandle(None))
         self.icon = wx.Icon(exeName, wx.BITMAP_TYPE_ICO)
+        self.alarmicon = wx.Icon(self._resource_path('alarm.ico'), wx.BITMAP_TYPE_ICO)
 
         # タスクトレイにアイコン表示
         self.tb_ico = MyTaskBar(self, self.icon)
@@ -46,6 +47,11 @@ class MyApp(wx.App):
         self.Bind(wx.EVT_TIMER, self.onTimer, self.timer)
         return True
 
+    def _resource_path(self, relative_path):
+        if hasattr(sys, '_MEIPASS'):
+            return os.path.join(sys._MEIPASS, relative_path)
+        return os.path.join(os.path.abspath("."), relative_path)
+
     def show_balloon(self, key, timer):
         endtime = timer["endtime"].strftime("%H:%M:%S")
         message = timer["message"]
@@ -57,7 +63,7 @@ class MyApp(wx.App):
         # listframe が表示されていたら、タイマー一覧から削除
         if self.listframe:
             self.listframe.del_item(timer["index"])
-        MessageFrame(None, "Alarm", timer["message"], self.icon)
+        MessageFrame(None, "Alarm", timer["message"], self.alarmicon)
 
     def onTimer(self, event):
         """一秒ごとに実行する処理

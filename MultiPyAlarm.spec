@@ -2,7 +2,7 @@ block_cipher = None
 
 a = Analysis(['MultiPyAlarm.py'],
              binaries=None,
-             datas=None,
+             datas=[('alarm.ico', '.')],
              hiddenimports=[],
              hookspath=[],
              runtime_hooks=[],
@@ -22,3 +22,4 @@ exe = EXE(pyz,
           strip=False,
           upx=True,
           console=False , icon='MultiPyAlarm.ico')
+
