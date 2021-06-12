@@ -59,6 +59,7 @@ class ListFrame(wx.Frame):
         self.listbox.InsertColumn(1, "left")
         self.listbox.InsertColumn(2, "message")
 
+        # FIXME: 起動時に listbox の alarm にゴミが表示される
         sizer = wx.FlexGridSizer(3, 1, gap=wx.Size(0,0))
         sizer.Add(self.count_text, flag=wx.GROW)
         sizer.Add(button_add, flag=wx.GROW)
