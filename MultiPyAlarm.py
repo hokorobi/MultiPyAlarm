@@ -38,8 +38,7 @@ class MyApp(wx.App):
         self.SetTopWindow(frame)
 
         # メインウィンドウ描画
-        self.listframe = ListFrame(None, self.timerlist, self.icon)
-        self.listframe.Show()
+        self.listframe = None
 
         # タイマースタート
         self.timer = wx.Timer(self)
