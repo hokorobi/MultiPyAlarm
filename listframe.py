@@ -45,40 +45,26 @@ class ListFrame(wx.Frame):
         self.SetIcon(icon)
 
         self.CreateStatusBar()
-        basepanel = wx.Panel(self, wx.ID_ANY)
+        basepanel = wx.Panel(self, wx.ID_ANY, style=wx.BORDER_SUNKEN)
 
-        toppanel = wx.Panel(basepanel, wx.ID_ANY, style=wx.BORDER_SUNKEN)
+        self.count_text = wx.TextCtrl(basepanel, wx.ID_ANY)
 
-        top1panel = wx.Panel(toppanel, wx.ID_ANY)
-        self.count_text = wx.TextCtrl(top1panel, wx.ID_ANY)
-        button_add = wx.Button(top1panel, wx.ID_ANY, "&add")
+        button_add = wx.Button(basepanel, wx.ID_ANY, "&add")
         button_add.Bind(wx.EVT_BUTTON, self._add_timer)
 
-        bottompanel = wx.Panel(basepanel, wx.ID_ANY, style=wx.BORDER_SUNKEN)
-        self.listbox = CheckListCtrl(bottompanel)
+        self.listbox = CheckListCtrl(basepanel)
         self.listbox.Bind(wx.EVT_LEFT_DCLICK, self.OnDoubleClick)
         self.listbox.InsertColumn(0, "alarm", width=80)
         self.listbox.InsertColumn(1, "left")
         self.listbox.InsertColumn(2, "message")
 
-        layout_bottom = wx.BoxSizer(wx.HORIZONTAL)
-        layout_bottom.Add(self.listbox, proportion=1, flag=wx.GROW | wx.ALL, border=3)
-
-        layout_top1 = wx.BoxSizer(wx.HORIZONTAL)
-        layout_top1.Add(self.count_text)
-        layout_top1.Add(button_add)
-
-        layout_top = wx.BoxSizer(wx.VERTICAL)
-        layout_top.Add(top1panel, flag=wx.GROW)
-
-        layout = wx.BoxSizer(wx.VERTICAL)
-        layout.Add(toppanel, flag=wx.GROW)
-        layout.Add(bottompanel, proportion=1, flag=wx.GROW)
-
-        basepanel.SetSizer(layout)
-        toppanel.SetSizer(layout_top)
-        top1panel.SetSizer(layout_top1)
-        bottompanel.SetSizer(layout_bottom)
+        sizer = wx.FlexGridSizer(3, 1, gap=wx.Size(0,0))
+        sizer.Add(self.count_text, flag=wx.GROW)
+        sizer.Add(button_add, flag=wx.GROW)
+        sizer.Add(self.listbox, flag=wx.GROW)
+        sizer.AddGrowableRow(2)
+        sizer.AddGrowableCol(0)
+        basepanel.SetSizer(sizer)
 
         # タイマーリストを画面のリストに追加
         for key, timer in self.timerlist.items():
