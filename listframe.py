@@ -54,9 +54,6 @@ class ListFrame(wx.Frame):
         button_add = wx.Button(top1panel, wx.ID_ANY, "&add")
         button_add.Bind(wx.EVT_BUTTON, self._add_timer)
 
-        top2panel = wx.Panel(toppanel, wx.ID_ANY)
-        self.message = wx.TextCtrl(top2panel, wx.ID_ANY)
-
         bottompanel = wx.Panel(basepanel, wx.ID_ANY, style=wx.BORDER_SUNKEN)
         self.listbox = CheckListCtrl(bottompanel)
         self.listbox.Bind(wx.EVT_LEFT_DCLICK, self.OnDoubleClick)
@@ -71,12 +68,8 @@ class ListFrame(wx.Frame):
         layout_top1.Add(self.count_text)
         layout_top1.Add(button_add)
 
-        layout_top2 = wx.BoxSizer(wx.HORIZONTAL)
-        layout_top2.Add(self.message, proportion=1, flag=wx.GROW)
-
         layout_top = wx.BoxSizer(wx.VERTICAL)
         layout_top.Add(top1panel, flag=wx.GROW)
-        layout_top.Add(top2panel, flag=wx.GROW)
 
         layout = wx.BoxSizer(wx.VERTICAL)
         layout.Add(toppanel, flag=wx.GROW)
@@ -85,7 +78,6 @@ class ListFrame(wx.Frame):
         basepanel.SetSizer(layout)
         toppanel.SetSizer(layout_top)
         top1panel.SetSizer(layout_top1)
-        top2panel.SetSizer(layout_top2)
         bottompanel.SetSizer(layout_bottom)
 
         # タイマーリストを画面のリストに追加
@@ -106,9 +98,14 @@ class ListFrame(wx.Frame):
         ファイルに対してタイマーを追加し、onTimer で画面へ反映する。
         """
         try:
-            self.timerlist.add(
-                self.count_text.GetValue(), self.message.GetValue(), True
-            )
+            strings = self.count_text.GetValue().split(' ', 1)
+            if len(strings) == 1:
+                countText = strings[0]
+                message = ''
+            else:
+                countText = strings[0]
+                message = strings[1]
+            self.timerlist.add(countText, message, True)
         except Exception:
             wx.MessageBox("invalid time", "Error", wx.OK | wx.ICON_INFORMATION)
 
