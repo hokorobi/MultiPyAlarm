@@ -47,7 +47,8 @@ class ListFrame(wx.Frame):
         self.CreateStatusBar()
         basepanel = wx.Panel(self, wx.ID_ANY, style=wx.BORDER_SUNKEN)
 
-        self.count_text = wx.TextCtrl(basepanel, wx.ID_ANY)
+        self.count_text = wx.TextCtrl(basepanel, wx.ID_ANY, style=wx.TE_PROCESS_ENTER)
+        self.count_text.Bind(wx.EVT_TEXT_ENTER, self._add_timer)
 
         button_add = wx.Button(basepanel, wx.ID_ANY, "&add")
         button_add.Bind(wx.EVT_BUTTON, self._add_timer)
