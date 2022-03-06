@@ -40,7 +40,7 @@ class TimerList(object):
     def add(self, inputtime, message, noneBaloon=False):
         timer = self.get_timer(inputtime, message, noneBaloon)
         if not timer:
-            raise
+            raise Exception("有効な時間を与えてください。")
         self.logger.timer("Add", timer)
         self.maxindex = self.maxindex + 1
         self.list[self.maxindex] = timer
