@@ -46,6 +46,6 @@ MultiPyAlarm [time [message1 message2 ...]]
   - Python 3.10.2 64bit
   - PyInstaller 4.10
   - pywin32 303
-  - | wxPython 4.1.2a1
-    | https://wxpython.org/Phoenix/snapshot-builds/wxPython-4.1.2a1.dev5259+d3bdb143-cp310-cp310-win_amd64.whl
+  - | wxPython 4.1.2a1.dev5308
+    | https://wxpython.org/Phoenix/snapshot-builds/wxPython-4.1.2a1.dev5308+2258f215-cp310-cp310-win_amd64.whl 
 
