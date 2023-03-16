@@ -88,7 +88,7 @@ class MyApp(wx.App):
             # 時間になったタイマーをアラーム。
             if timer["endtime"] < datetime.datetime.today():
                 self.alarm(key, timer)
-                # FIXME: 3 行 Alarm が出力される。
+                # FIXME: 3 行 Alarm のログが出力される。
                 # このループで 3 回実行されているわけではないみたい
                 self.logger.timer("Alarm", timer)
                 del_keys.append(key)
