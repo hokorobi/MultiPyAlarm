@@ -42,9 +42,9 @@ MultiPyAlarm [time [message1 message2 ...]]
 - MultiPyAlarm.exe のあるディレクトリに timerlist というファイルを作り、アラーム情報を保存します。
 - 開発環境
 
-  - Windows10 Pro 64bit
-  - Python 3.11.6 64bit
-  - PyInstaller 6.2.0
+  - Windows11 Pro 64bit
+  - Python 3.11.7 64bit
+  - PyInstaller 6.3.0
   - pywin32 306
   - wxPython 4.2.1
 
