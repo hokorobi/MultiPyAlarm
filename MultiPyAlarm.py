@@ -88,10 +88,9 @@ class MyApp(wx.App):
             # 時間になったタイマーをアラーム。
             if timer["endtime"] < datetime.datetime.today():
                 self.alarm(key, timer)
-                # FIXME: 3 行 Alarm のログが出力される。
-                # このループで 3 回実行されているわけではないみたい
                 self.logger.timer("Alarm", timer)
                 del_keys.append(key)
+                continue
 
             # 新規追加されたタイマーがあり、listframe が表示されていない場合
             # 、システムトレイにタイマー追加のバルーンを表示する。
